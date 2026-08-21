@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/s0fractal/decision-archaeology/blob/main/schemas/case.schema.json",
+  "title": "Decision Archaeology case manifest",
+  "description": "Draft manifest for a reproducible public investigation case.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "id",
+    "title",
+    "status",
+    "visibility",
+    "summary",
+    "paths",
+    "dependencies"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "schema": {
+      "const": "decision-archaeology.case@v0"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:[._-][a-z0-9]+)*$"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "status": {
+      "enum": ["draft", "active", "frozen", "archived"]
+    },
+    "visibility": {
+      "enum": ["public", "mixed", "restricted"]
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1
+    },
+    "paths": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sources",
+        "observations",
+        "claims",
+        "decisions",
+        "checks",
+        "receipts",
+        "artifacts",
+        "exclusions"
+      ],
+      "properties": {
+        "sources": { "const": "sources/" },
+        "observations": { "const": "observations/" },
+        "claims": { "const": "claims/" },
+        "decisions": { "const": "decisions/" },
+        "checks": { "const": "checks/" },
+        "receipts": { "const": "receipts/" },
+        "artifacts": { "const": "artifacts/" },
+        "exclusions": { "const": "exclusions.md" }
+      }
+    },
+    "dependencies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "version", "role"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "version": {
+            "type": "string",
+            "minLength": 1
+          },
+          "role": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  }
+}
