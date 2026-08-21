@@ -14,6 +14,12 @@ When a case exposes a missing capability:
    behavior without one;
 5. pin the exact dependency version in the case manifest.
 
+Promoted requests use the immutable template under `templates/need/` and the
+workflow in `docs/case-derived-needs.md`. A target repository's merged need
+packet records demand and routing only; it is not protocol adoption. Keep the
+full dossier here and transfer only the minimized reproducer, exact revisions,
+artifact digests, and interpretation boundaries.
+
 Keep facts, hypotheses, and speculation distinguishable. Generated artifacts
 must retain links to their inputs and transformations. Do not describe a draft,
 experiment, or proposed bridge as adopted or implemented.

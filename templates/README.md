@@ -12,4 +12,8 @@ place. Corrections produce a new patch version; compatible additions produce a
 new minor version; a different case model requires a new major version and may
 also require a new schema identity.
 
-The initial template is [`case/v0.1.0/`](case/v0.1.0/README.md).
+Published templates:
+
+- [`case/v0.1.0/`](case/v0.1.0/README.md) — investigation case;
+- [`need/v0.1.0/`](need/v0.1.0/request.md) — evidence-bound demand packet for
+  the repository that owns a blocked capability.

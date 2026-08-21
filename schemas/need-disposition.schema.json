@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/s0fractal/decision-archaeology/blob/main/schemas/need-disposition.schema.json",
+  "title": "Decision Archaeology need disposition",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "request_id",
+    "status",
+    "owner_surface",
+    "rationale",
+    "next_action",
+    "decided_at",
+    "decided_by",
+    "authority"
+  ],
+  "properties": {
+    "$schema": { "type": "string" },
+    "schema": { "const": "decision-archaeology.need-disposition@v0" },
+    "request_id": { "type": "string", "pattern": "^DA-[A-Z0-9]+-[0-9]{4}$" },
+    "status": {
+      "enum": [
+        "untriaged",
+        "already-supported",
+        "application-adapter",
+        "profile-change",
+        "protocol-candidate",
+        "wrong-owner",
+        "declined",
+        "blocked"
+      ]
+    },
+    "owner_surface": { "type": "string", "minLength": 1 },
+    "rationale": { "type": "string", "minLength": 1 },
+    "next_action": { "type": "string", "minLength": 1 },
+    "decided_at": { "type": ["string", "null"], "format": "date-time" },
+    "decided_by": { "type": ["string", "null"] },
+    "authority": { "const": "non-normative-routing-only" }
+  }
+}
