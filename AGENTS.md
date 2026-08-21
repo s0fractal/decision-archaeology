@@ -34,7 +34,10 @@ retired with a reason. The same rule governs a source's witness, a candidate's g
 recorded outcome: absence must be declared, never produced by deletion. Each of
 those guards reads every committed revision of its own record, because a guard
 compared against `HEAD` protects an uncommitted working tree and stops protecting
-anything the moment the change is committed.
+anything the moment the change is committed. A record that moves declares
+`moved_from`, since rename detection is a similarity heuristic and a move that
+also edits the record can fall below it. A receipt is never edited after it is
+committed: a correction is a new receipt that supersedes it.
 
 Keep facts, hypotheses, and speculation distinguishable. Generated artifacts
 must retain links to their inputs and transformations. Do not describe a draft,

@@ -14,11 +14,11 @@ sys.path.insert(0, str(REPO_ROOT))
 
 from tests.gitfixture import commit, repository  # noqa: E402
 from tools.validate_need_outcome import (  # noqa: E402
-    load_object, no_outcome_was_deleted, validate_outcome,
+    load_object, no_outcome_was_deleted, outcomes_are_immutable, validate_outcome,
 )
 
 
-OUTCOME = REPO_ROOT / "outcomes" / "DA-SIGMA-0001.json"
+OUTCOME = REPO_ROOT / "outcomes" / "DA-SIGMA-0001.2.json"
 
 
 def rejected(function, label: str) -> None:
@@ -103,13 +103,38 @@ def main() -> int:
 
         recorded = repository(temporary_path / "committed")
         outcome = recorded / "outcomes" / "DA-SIGMA-0001.json"
-        commit(recorded, {outcome: json.loads(raw)}, "record the outcome")
+        original = json.loads(raw)
+        original.pop("supersedes", None)
+        commit(recorded, {outcome: original}, "record the outcome")
         outcome.unlink()
         commit(recorded, {}, "delete the outcome")
         rejected(lambda: no_outcome_was_deleted(recorded),
                  "a recorded outcome deleted in a later commit")
 
-    print("NEED-OUTCOME-BOUNDARY: ALL PASS (9/9)")
+        rewritten = repository(temporary_path / "rewritten")
+        receipt = rewritten / "outcomes" / "DA-SIGMA-0001.json"
+        commit(rewritten, {receipt: original}, "record the outcome")
+        edited = json.loads(json.dumps(original))
+        edited["producer"] = "somebody else, later"
+        edited["recorded_at"] = "2027-01-01T00:00:00Z"
+        commit(rewritten, {receipt: edited}, "rewrite the receipt in place")
+        rejected(lambda: outcomes_are_immutable(rewritten),
+                 "a committed receipt rewritten under the same name")
+
+        misnamed = repository(temporary_path / "misnamed")
+        commit(misnamed, {misnamed / "outcomes" / "DA-SIGMA-0002.json": original},
+               "a receipt whose filename names another request")
+        rejected(lambda: outcomes_are_immutable(misnamed),
+                 "a receipt whose filename does not match its request id")
+
+        orphan = repository(temporary_path / "orphan")
+        claiming = json.loads(json.dumps(original))
+        claiming["supersedes"] = "outcomes/DA-SIGMA-0001.9.json"
+        commit(orphan, {orphan / "outcomes" / "DA-SIGMA-0001.json": claiming}, "orphan")
+        rejected(lambda: outcomes_are_immutable(orphan),
+                 "a receipt superseding one that was never recorded")
+
+    print("NEED-OUTCOME-BOUNDARY: ALL PASS (12/12)")
     return 0
 
 

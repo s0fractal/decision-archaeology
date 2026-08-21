@@ -6,6 +6,7 @@ from __future__ import annotations
 import copy
 import json
 import shutil
+import subprocess
 import sys
 import tempfile
 from pathlib import Path
@@ -15,7 +16,7 @@ sys.path.insert(0, str(REPO_ROOT))
 
 from tests.gitfixture import commit, repository  # noqa: E402
 from tools.admission_gate import render, validate  # noqa: E402
-from tools.history import committed_versions  # noqa: E402
+from tools.history import committed_versions, unexplained_vanished  # noqa: E402
 
 CANDIDATE = REPO_ROOT / "candidates" / "kherson-fortifications"
 
@@ -132,7 +133,42 @@ def main() -> int:
                                            prose="# Admission gate\n\nAll good.\n")),
                  "prose that drifted from the record")
 
-    print("ADMISSION-GATE-BOUNDARY: ALL PASS (11/11)")
+        # a move that also edits the record: rename detection is a heuristic, so
+        # the record must declare where it came from, and the past follows it
+        moved = repository(root / "moved")
+        first = moved / "candidates" / "kherson-fortifications"
+        first.mkdir(parents=True, exist_ok=True)
+        shutil.copy(CANDIDATE / "source-inventory.json", first / "source-inventory.json")
+        commit(moved, {first / "admission.json": gate,
+                       first / "admission.md": render(gate, "NOT ADMITTED")}, "gate")
+        second = moved / "candidates" / "kherson-2"
+        subprocess.run(["git", "-C", str(moved), "mv", str(first), str(second)],
+                       check=True, capture_output=True)
+        renamed = copy.deepcopy(gate)
+        renamed["candidate_id"] = "kherson-2"
+        renamed["requirements"] = [item for item in renamed["requirements"]
+                                   if item["id"] != "AG-008"]
+        commit(moved, {second / "admission.json": renamed,
+                       second / "admission.md": render(renamed, "NOT ADMITTED")},
+               "move and drop AG-008 at once")
+        undeclared = unexplained_vanished(moved, "candidates/*/admission.json")
+        assert undeclared == ["candidates/kherson-fortifications/admission.json"], undeclared
+        print("OK   a record moved without declaring where it came from")
+
+        declared = copy.deepcopy(renamed)
+        declared["moved_from"] = ["candidates/kherson-fortifications/admission.json"]
+        commit(moved, {second / "admission.json": declared,
+                       second / "admission.md": render(declared, "NOT ADMITTED")},
+               "declare the move")
+        assert not unexplained_vanished(moved, "candidates/*/admission.json")
+        rejected(lambda: validate(second / "admission.json",
+                                  history=committed_versions(
+                                      second / "admission.json",
+                                      lambda value: value.get("candidate_id"),
+                                      declared["moved_from"])),
+                 "a requirement dropped during a declared move")
+
+    print("ADMISSION-GATE-BOUNDARY: ALL PASS (13/13)")
     return 0
 
 

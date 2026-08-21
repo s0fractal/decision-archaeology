@@ -21,6 +21,11 @@
   "properties": {
     "$schema": { "type": "string" },
     "schema": { "const": "decision-archaeology.need-outcome@v1" },
+    "supersedes": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Repository path of the earlier receipt this one replaces. The earlier receipt is kept byte for byte; a correction is never an edit."
+    },
     "request_id": { "type": "string", "pattern": "^DA-[A-Z0-9]+-[0-9]{4}$" },
     "status": { "enum": ["fulfilled", "declined", "blocked", "superseded"] },
     "classification": {

@@ -22,11 +22,14 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from tools.history import deleted_since_first_commit  # noqa: E402
+from tools.history import deleted_since_first_commit, first_committed_bytes  # noqa: E402
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 REQUEST_ID = re.compile(r"^DA-[A-Z0-9]+-[0-9]{4}$")
+OUTCOME_FILE = re.compile(r"^(DA-[A-Z0-9]+-[0-9]{4})(?:\.[0-9]+)?\.json$")
+KNOWN_SCHEMAS = {"decision-archaeology.need-outcome@v0",
+                 "decision-archaeology.need-outcome@v1"}
 HEX40 = re.compile(r"^[0-9a-f]{40}$")
 HEX64 = re.compile(r"^[0-9a-f]{64}$")
 STATUSES = {"fulfilled", "declined", "blocked", "superseded"}
@@ -110,15 +113,16 @@ def artifact(value: object, label: str, revision: str | None) -> None:
 
 def validate_outcome(outcome_path: Path, verify_content: bool) -> None:
     outcome = load_object(outcome_path)
-    exact_keys(
-        outcome,
-        {
-            "$schema", "schema", "request_id", "status", "classification",
-            "target", "resolution", "replay", "rebuild", "recorded_at", "producer",
-            "authority", "non_claims",
-        },
-        "outcome",
-    )
+    required = {
+        "$schema", "schema", "request_id", "status", "classification",
+        "target", "resolution", "replay", "rebuild", "recorded_at", "producer",
+        "authority", "non_claims",
+    }
+    present = set(outcome) - {"supersedes"}
+    require(present == required,
+            f"outcome: keys differ: {sorted(map(repr, present ^ required))}")
+    if "supersedes" in outcome:
+        nonempty(outcome["supersedes"], "outcome.supersedes")
     require(outcome["schema"] == "decision-archaeology.need-outcome@v1",
             "outcome: wrong schema")
     nonempty(outcome["$schema"], "outcome.$schema")
@@ -211,6 +215,51 @@ def no_outcome_was_deleted(root: Path) -> None:
                       "closed in the record, whatever happened afterwards")
 
 
+def outcomes_are_immutable(root: Path) -> dict[str, dict]:
+    """A committed receipt keeps its bytes. Corrections are new receipts.
+
+    Proving that a pathname survives proves nothing about what now sits there.
+    An outcome is a statement about a decision that was taken; rewriting it in
+    place would leave a record that describes only the latest opinion of the
+    past, which is the failure this whole family of guards exists to prevent.
+    """
+    records = {}
+    for path in sorted((root / "outcomes").glob("*.json")):
+        relative = path.relative_to(root).as_posix()
+        named = OUTCOME_FILE.fullmatch(path.name)
+        require(named is not None,
+                f"{relative}: an outcome file is named <REQUEST-ID>.json, or "
+                "<REQUEST-ID>.<n>.json when it supersedes an earlier receipt")
+        document = load_object(path)
+        require(document.get("request_id") == named.group(1),
+                f"{relative}: request_id does not match the filename")
+        require(document.get("schema") in KNOWN_SCHEMAS,
+                f"{relative}: unknown outcome schema {document.get('schema')!r}")
+        committed = first_committed_bytes(root, relative)
+        if committed is not None:
+            require(path.read_bytes() == committed,
+                    f"{relative}: rewritten after it was committed; a correction is a "
+                    "new receipt that supersedes this one, never an edit of it")
+        records[relative] = document
+
+    superseded = {}
+    for relative, document in records.items():
+        earlier = document.get("supersedes")
+        if earlier is None:
+            continue
+        require(earlier in records,
+                f"{relative}: supersedes {earlier!r}, which is not a recorded outcome")
+        require(earlier != relative, f"{relative}: supersedes itself")
+        require(earlier not in superseded,
+                f"{relative}: {earlier!r} is already superseded by "
+                f"{superseded.get(earlier)!r}")
+        require(records[earlier]["request_id"] == document["request_id"],
+                f"{relative}: supersedes a receipt for a different request")
+        superseded[earlier] = relative
+    return {relative: document for relative, document in records.items()
+            if relative not in superseded}
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("outcomes", nargs="+", type=Path)
@@ -218,7 +267,12 @@ def main() -> int:
                         help="validate structure only, without reading pinned blobs")
     args = parser.parse_args()
     no_outcome_was_deleted(REPO_ROOT)
+    live = outcomes_are_immutable(REPO_ROOT)
     for outcome_path in args.outcomes:
+        relative = outcome_path.resolve().relative_to(REPO_ROOT).as_posix()
+        if relative not in live:
+            print(f"SUPERSEDED: {outcome_path} (kept byte for byte)")
+            continue
         validate_outcome(outcome_path, not args.no_artifact_content)
         print(f"PASS: {outcome_path}")
     return 0

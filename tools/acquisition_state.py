@@ -29,7 +29,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from tools.history import committed_versions  # noqa: E402
+from tools.history import committed_versions, unexplained_vanished  # noqa: E402
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 SCHEMA = "decision-archaeology.acquisition-state@v0"
@@ -167,6 +167,9 @@ def validate(state_path: Path, index_path: Path, history: list[dict] | None = No
     require(state["schema"] == SCHEMA, "acquisition state: wrong schema")
     require(state["authority"] == "retrievability-and-custody-only",
             "acquisition state: bad authority")
+    require(set(state) <= {"schema", "case_id", "source_index", "checked_at", "authority",
+                           "non_claims", "sources", "moved_from"},
+            f"acquisition state: unknown fields {sorted(set(state) - {'schema', 'case_id', 'source_index', 'checked_at', 'authority', 'non_claims', 'sources', 'moved_from'})}")
     require(isinstance(state.get("non_claims"), list) and state["non_claims"],
             "acquisition state: non_claims must not be empty")
     datetime.fromisoformat(state["checked_at"].replace("Z", "+00:00"))
@@ -215,6 +218,11 @@ def validate(state_path: Path, index_path: Path, history: list[dict] | None = No
                         f"{before['witness']['snapshot_timestamp']} disappeared without "
                         "a stated reason; absence must be declared, not produced")
 
+    vanished = unexplained_vanished(REPO_ROOT, "examples/*/sources/acquisition-state.json")
+    require(not vanished,
+            f"{vanished}: acquisition records were committed at these paths and are "
+            "gone; a record that moves declares `moved_from`")
+
     counts = {}
     for entry in state["sources"]:
         counts[entry["custody"]] = counts.get(entry["custody"], 0) + 1
@@ -230,7 +238,9 @@ def main() -> int:
     arguments = parser.parse_args()
     index_path = arguments.case / "sources" / "source-index.json"
     state_path = arguments.case / "sources" / "acquisition-state.json"
-    history = committed_versions(state_path)
+    committed = json.loads(state_path.read_text()) if state_path.is_file() else {}
+    history = committed_versions(state_path, lambda value: value.get("case_id"),
+                                 committed.get("moved_from") or [])
     if arguments.refresh:
         state = refresh(index_path)
         state_path.write_text(json.dumps(state, ensure_ascii=False, indent=2) + "\n")

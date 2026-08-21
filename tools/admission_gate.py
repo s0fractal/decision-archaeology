@@ -18,7 +18,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from tools.history import committed_versions, inside_repository  # noqa: E402
+from tools.history import committed_versions, unexplained_vanished, inside_repository  # noqa: E402
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 SCHEMA = "decision-archaeology.admission-gate@v0"
@@ -143,6 +143,11 @@ def validate(gate_path: Path, write: bool = False,
                         f"{identifier}: was met in an earlier revision and is not "
                         "recorded as reopened")
 
+    vanished = unexplained_vanished(REPO_ROOT, "candidates/*/admission.json")
+    require(not vanished,
+            f"{vanished}: admission records were committed at these paths and are "
+            "gone; a candidate that moves declares `moved_from`")
+
     verdict = "NOT ADMITTED" if unmet else "ADMISSIBLE"
     published = REPO_ROOT / "examples" / gate["candidate_id"]
     require(not (unmet and published.exists()),
@@ -170,7 +175,10 @@ def main() -> int:
     parser.add_argument("--write", action="store_true")
     arguments = parser.parse_args()
     gate_path = arguments.candidate / "admission.json"
-    validate(gate_path, arguments.write, committed_versions(gate_path))
+    gate = json.loads(gate_path.read_text())
+    history = committed_versions(gate_path, lambda value: value.get("candidate_id"),
+                                 gate.get("moved_from") or [])
+    validate(gate_path, arguments.write, history)
     return 0
 
 
