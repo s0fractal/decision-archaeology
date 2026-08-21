@@ -1,0 +1,4 @@
+.mise.local.toml
+.venv/
+__pycache__/
+*.py[cod]

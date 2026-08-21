@@ -1,0 +1,21 @@
+{
+  "$schema": "../../../schemas/case.schema.json",
+  "schema": "decision-archaeology.case@v0",
+  "template": "decision-archaeology.case-template@v0.1.0",
+  "id": "replace-me",
+  "title": "Replace with a neutral case title",
+  "status": "draft",
+  "visibility": "public",
+  "summary": "Replace with the bounded retrospective question.",
+  "paths": {
+    "sources": "sources/",
+    "observations": "observations/",
+    "claims": "claims/",
+    "decisions": "decisions/",
+    "checks": "checks/",
+    "receipts": "receipts/",
+    "artifacts": "artifacts/",
+    "exclusions": "exclusions.md"
+  },
+  "dependencies": []
+}
