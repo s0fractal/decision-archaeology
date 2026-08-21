@@ -78,6 +78,11 @@ same term is carried into Warrant as a re-runnable `ski@v1` reason in the
 `warrant-verify` release re-executes it for the same 203,530 ATP and refuses to
 file a verdict the term does not support.
 
+Who can still retrieve these sources, and who holds their bytes, is recorded in
+[`sources/acquisition-state.json`](sources/acquisition-state.json). The
+publisher of the AMCU documents returns HTTP 403 to automated clients, and two
+of its three pages are held in no copy this case can point to.
+
 ## Limitations
 
 The most important limitation is missing decisional reasoning: the public news
