@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Hostile boundary checks for decision-archaeology.need-outcome@v0."""
+"""Hostile boundary checks for decision-archaeology.need-outcome@v1."""
 
 from __future__ import annotations
 
@@ -35,9 +35,9 @@ def main() -> int:
         temporary_path = Path(temporary)
         raw = OUTCOME.read_text()
         duplicate = raw.replace(
-            '  "schema": "decision-archaeology.need-outcome@v0",',
-            '  "schema": "decision-archaeology.need-outcome@v0",\n'
-            '  "schema": "decision-archaeology.need-outcome@v0",',
+            '  "schema": "decision-archaeology.need-outcome@v1",',
+            '  "schema": "decision-archaeology.need-outcome@v1",\n'
+            '  "schema": "decision-archaeology.need-outcome@v1",',
             1,
         )
         duplicate_path = temporary_path / "duplicate.json"
@@ -71,6 +71,24 @@ def main() -> int:
             "resolution revision missing from this checkout",
         )
 
+        unnamed = json.loads(raw)
+        unnamed["rebuild"]["derived_from"] = "notes/private-scratch.md"
+        unnamed_path = temporary_path / "unnamed.json"
+        unnamed_path.write_text(json.dumps(unnamed))
+        rejected(
+            lambda: validate_outcome(unnamed_path, True),
+            "rebuild derived from something the outcome does not publish",
+        )
+
+        drifted = json.loads(raw)
+        drifted["rebuild"]["sha256"] = "0" * 64
+        drifted_path = temporary_path / "drifted.json"
+        drifted_path.write_text(json.dumps(drifted))
+        rejected(
+            lambda: validate_outcome(drifted_path, True),
+            "rebuild digest that does not match its pinned revision",
+        )
+
         traversal = json.loads(raw)
         traversal["resolution"]["artifacts"][0]["path"] = "../outside"
         traversal_path = temporary_path / "traversal.json"
@@ -80,7 +98,7 @@ def main() -> int:
             "repository path traversal",
         )
 
-    print("NEED-OUTCOME-BOUNDARY: ALL PASS (6/6)")
+    print("NEED-OUTCOME-BOUNDARY: ALL PASS (8/8)")
     return 0
 
 

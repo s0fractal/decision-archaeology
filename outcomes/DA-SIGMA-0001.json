@@ -1,6 +1,6 @@
 {
   "$schema": "../schemas/need-outcome.schema.json",
-  "schema": "decision-archaeology.need-outcome@v0",
+  "schema": "decision-archaeology.need-outcome@v1",
   "request_id": "DA-SIGMA-0001",
   "status": "fulfilled",
   "classification": "application-adapter",
@@ -40,12 +40,23 @@
       "sha256": "601018b92869f940b8653aaf2043f92367ad004d32c575ce5bdff0cc85d12708"
     }
   },
+  "rebuild": {
+    "revision": "6e6cd49acb1673239c7af1965e0ad043d5a927f3",
+    "path": "tests/profile_doc_replay_test.py",
+    "sha256": "74c81c1258e3a2822c471ea15400299537cc73cf9fc30211feb00a5c2909f4e3",
+    "command": "mise run profiles:check",
+    "derived_from": "profiles/sigma-money-add-eq-v0.md",
+    "excludes": [
+      "profiles/sigma_money_add_eq_v0.py"
+    ]
+  },
   "recorded_at": "2026-08-21T11:59:37Z",
-  "producer": "Codex, continuing the user-authorized case-derived needs loop",
+  "producer": "Codex, continuing the user-authorized case-derived needs loop; rebuild recorded by a Claude Opus 5 agent under the v1 migration",
   "authority": "outcome-linkage-only",
   "non_claims": [
     "This outcome records that the blocked arithmetic operation is reproducible; it does not establish the procurement case's substantive hypothesis.",
     "The application-owned profile is not part of the Sigma-Glyph standard and has no special status under Book I.",
-    "Green replay and CI checks are not an independent review or protocol adoption gate."
+    "Green replay and CI checks are not an independent review or protocol adoption gate.",
+    "The rebuild is a doc-derived reconstruction inside this repository, not an independent implementation, an outside reviewer, or a protocol adoption gate."
   ]
 }

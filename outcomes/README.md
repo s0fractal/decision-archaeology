@@ -12,6 +12,13 @@ must not break it — otherwise the cheapest way to make the gate green is to
 rewrite the record until it matches the present, which is the one thing a
 receipt must never do.
 
+`decision-archaeology.need-outcome@v1` additionally requires a `rebuild` block:
+the revision, path, and digest of a rebuild derived from one of the outcome's own
+published artifacts, together with the implementations it was forbidden to read.
+The validator rejects an outcome whose rebuild imports what it is supposed to
+verify independently. The single `@v0` record was migrated in place rather than
+kept as a second shape, and its rebuild is recorded at the revision where it ran.
+
 Validate every recorded outcome with:
 
 ```sh

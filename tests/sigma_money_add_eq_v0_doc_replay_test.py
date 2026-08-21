@@ -2,7 +2,7 @@
 """Rebuild the money-add-equality terms from the PROFILE DOCUMENT alone.
 
 This is a doc-derived reimplementation, not an independent gate: it is written
-in this repository, from `profiles/sigma-money-add-eq-v0.md` §"Construction
+in this repository, from sigma-money-add-eq-v0.md, section "Construction
 listing", and it deliberately does not import `profiles.sigma_money_add_eq_v0`.
 What it machine-checks is one property the profile exists for — that the
 published listing determines the term bytes, so a second implementer reproduces
