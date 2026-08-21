@@ -36,10 +36,19 @@
       "minLength": 1
     },
     "status": {
-      "enum": ["draft", "active", "frozen", "archived"]
+      "enum": [
+        "draft",
+        "active",
+        "frozen",
+        "archived"
+      ]
     },
     "visibility": {
-      "enum": ["public", "mixed", "restricted"]
+      "enum": [
+        "public",
+        "mixed",
+        "restricted"
+      ]
     },
     "summary": {
       "type": "string",
@@ -59,14 +68,33 @@
         "exclusions"
       ],
       "properties": {
-        "sources": { "const": "sources/" },
-        "observations": { "const": "observations/" },
-        "claims": { "const": "claims/" },
-        "decisions": { "const": "decisions/" },
-        "checks": { "const": "checks/" },
-        "receipts": { "const": "receipts/" },
-        "artifacts": { "const": "artifacts/" },
-        "exclusions": { "const": "exclusions.md" }
+        "sources": {
+          "const": "sources/"
+        },
+        "observations": {
+          "const": "observations/"
+        },
+        "claims": {
+          "const": "claims/"
+        },
+        "decisions": {
+          "const": "decisions/"
+        },
+        "checks": {
+          "const": "checks/"
+        },
+        "receipts": {
+          "const": "receipts/"
+        },
+        "artifacts": {
+          "const": "artifacts/"
+        },
+        "exclusions": {
+          "const": "exclusions.md"
+        },
+        "exclusions_index": {
+          "const": "exclusions.json"
+        }
       }
     },
     "dependencies": {
@@ -74,7 +102,11 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["id", "version", "role"],
+        "required": [
+          "id",
+          "version",
+          "role"
+        ],
         "properties": {
           "id": {
             "type": "string",

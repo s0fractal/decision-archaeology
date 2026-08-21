@@ -1,0 +1,16 @@
+{
+  "$schema": "../../../schemas/exclusions.schema.json",
+  "schema": "decision-archaeology.exclusions@v0",
+  "case_id": "replace-me",
+  "authority": "recorded-absence-only",
+  "exclusions": [
+    {
+      "id": "EX-001",
+      "kind": "not-located",
+      "subject": "Name the material that was searched for and not found.",
+      "statement": "State what the case therefore does not establish.",
+      "search_boundary": "Name the sources actually searched, and when.",
+      "would_resolve": "State what would end this absence."
+    }
+  ]
+}

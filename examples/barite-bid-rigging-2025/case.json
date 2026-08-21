@@ -1,7 +1,7 @@
 {
   "$schema": "../../schemas/case.schema.json",
   "schema": "decision-archaeology.case@v0",
-  "template": "decision-archaeology.case-template@v0.1.0",
+  "template": "decision-archaeology.case-template@v0.2.0",
   "id": "barite-bid-rigging-2025",
   "title": "Barite tenders and AMCU decision 535-r",
   "status": "active",
@@ -15,7 +15,8 @@
     "checks": "checks/",
     "receipts": "receipts/",
     "artifacts": "artifacts/",
-    "exclusions": "exclusions.md"
+    "exclusions": "exclusions.md",
+    "exclusions_index": "exclusions.json"
   },
   "dependencies": [
     {

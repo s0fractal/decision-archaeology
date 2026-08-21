@@ -27,6 +27,12 @@ and forbidden to import the reference implementation. An outcome that resolves a
 need names the rebuild it survived. Green vectors from the author's own module
 prove nothing about agreement between strangers, which is what a profile is for.
 
+A case records what it does not establish as data, not as prose. `exclusions.md`
+is rendered from `exclusions.json`, an absence that nothing would resolve is a
+claim rather than a limitation, and an exclusion leaves the record only by being
+retired with a reason. The same rule governs a source's witness: absence must be
+declared, never produced by deletion.
+
 Keep facts, hypotheses, and speculation distinguishable. Generated artifacts
 must retain links to their inputs and transformations. Do not describe a draft,
 experiment, or proposed bridge as adopted or implemented.
