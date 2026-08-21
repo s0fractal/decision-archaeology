@@ -22,6 +22,16 @@
       "id": "python",
       "version": "3.13.15",
       "role": "standard-library offline and live case checks"
+    },
+    {
+      "id": "sigma-glyph",
+      "version": "0.6.7",
+      "role": "pinned Book I evaluator for the exact-sum receipt"
+    },
+    {
+      "id": "decision-archaeology.sigma-money-add-eq",
+      "version": "v0",
+      "role": "application-owned canonical encoding of the exact-sum claim"
     }
   ]
 }

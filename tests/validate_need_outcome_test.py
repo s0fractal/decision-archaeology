@@ -1,0 +1,70 @@
+#!/usr/bin/env python3
+"""Hostile boundary checks for decision-archaeology.need-outcome@v0."""
+
+from __future__ import annotations
+
+import json
+import sys
+import tempfile
+from pathlib import Path
+
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(REPO_ROOT))
+
+from tools.validate_need_outcome import load_object, validate_outcome  # noqa: E402
+
+
+OUTCOME = REPO_ROOT / "outcomes" / "DA-SIGMA-0001.json"
+
+
+def rejected(function, label: str) -> None:
+    try:
+        function()
+    except (ValueError, json.JSONDecodeError):
+        print(f"OK   {label}")
+        return
+    raise AssertionError(f"accepted hostile outcome: {label}")
+
+
+def main() -> int:
+    validate_outcome(OUTCOME, True)
+    print("OK   valid outcome and local artifact digests")
+
+    with tempfile.TemporaryDirectory() as temporary:
+        temporary_path = Path(temporary)
+        raw = OUTCOME.read_text()
+        duplicate = raw.replace(
+            '  "schema": "decision-archaeology.need-outcome@v0",',
+            '  "schema": "decision-archaeology.need-outcome@v0",\n'
+            '  "schema": "decision-archaeology.need-outcome@v0",',
+            1,
+        )
+        duplicate_path = temporary_path / "duplicate.json"
+        duplicate_path.write_text(duplicate)
+        rejected(lambda: load_object(duplicate_path), "duplicate JSON key")
+
+        mismatched = json.loads(raw)
+        mismatched["status"] = "blocked"
+        mismatched_path = temporary_path / "mismatched.json"
+        mismatched_path.write_text(json.dumps(mismatched))
+        rejected(
+            lambda: validate_outcome(mismatched_path, False),
+            "inconsistent status and classification",
+        )
+
+        traversal = json.loads(raw)
+        traversal["resolution"]["artifacts"][0]["path"] = "../outside"
+        traversal_path = temporary_path / "traversal.json"
+        traversal_path.write_text(json.dumps(traversal))
+        rejected(
+            lambda: validate_outcome(traversal_path, True),
+            "repository path traversal",
+        )
+
+    print("NEED-OUTCOME-BOUNDARY: ALL PASS (4/4)")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

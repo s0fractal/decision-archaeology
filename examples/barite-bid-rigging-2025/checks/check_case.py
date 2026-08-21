@@ -4,8 +4,10 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import re
+import sys
 from decimal import Decimal
 from pathlib import Path
 
@@ -13,6 +15,7 @@ from pathlib import Path
 CASE_ROOT = Path(__file__).resolve().parents[1]
 REPO_ROOT = Path(__file__).resolve().parents[3]
 DEFENDANTS = {"35341905", "45333199"}
+sys.path.insert(0, str(REPO_ROOT))
 
 
 def load_json(path: Path) -> object:
@@ -50,7 +53,17 @@ def check_manifest() -> dict[str, object]:
                 "id": "python",
                 "version": "3.13.15",
                 "role": "standard-library offline and live case checks",
-            }
+            },
+            {
+                "id": "sigma-glyph",
+                "version": "0.6.7",
+                "role": "pinned Book I evaluator for the exact-sum receipt",
+            },
+            {
+                "id": "decision-archaeology.sigma-money-add-eq",
+                "version": "v0",
+                "role": "application-owned canonical encoding of the exact-sum claim",
+            },
         ],
         "case dependency identity changed",
     )
@@ -63,9 +76,12 @@ def check_manifest() -> dict[str, object]:
     return manifest
 
 
-def build_report() -> dict[str, object]:
+def build_report() -> tuple[dict[str, object], dict[str, object]]:
+    from profiles.sigma_money_add_eq_v0 import PROFILE_ID, evaluate
+
     manifest = check_manifest()
-    projection = load_json(CASE_ROOT / "sources" / "prozorro-projection.json")
+    projection_path = CASE_ROOT / "sources" / "prozorro-projection.json"
+    projection = load_json(projection_path)
     source_index = load_json(CASE_ROOT / "sources" / "source-index.json")
     observations = load_jsonl(CASE_ROOT / "observations" / "observations.jsonl")
     claims = load_jsonl(CASE_ROOT / "claims" / "claims.jsonl")
@@ -117,10 +133,43 @@ def build_report() -> dict[str, object]:
     require(set(decision["respondent_company_ids"]) == DEFENDANTS, "wrong AMCU respondents")
     require(set(decision["tender_ids"]) == set(records), "decision-to-tender scope mismatch")
 
+    ordered_records = [records[tender_id] for tender_id in sorted(records)]
+    sigma_claim = {
+        "schema": PROFILE_ID,
+        "unit": "UAH",
+        "decimal_places": 2,
+        "addends": [record["expected_amount_uah_vat_included"] for record in ordered_records],
+        "expected": format(exact_sum, ".2f"),
+    }
+    sigma_execution = evaluate(sigma_claim)
+    require(sigma_execution["verdict"] == "C1-TRUE", "Sigma exact-sum verdict changed")
+    sigma_receipt = {
+        "schema": "decision-archaeology.sigma-check-receipt@v0",
+        "case_id": manifest["id"],
+        "check_id": "expected-value-exact-sum",
+        "need_id": "DA-SIGMA-0001",
+        "input": "sources/prozorro-projection.json",
+        "input_sha256": hashlib.sha256(projection_path.read_bytes()).hexdigest(),
+        "claim": sigma_claim,
+        "execution": sigma_execution,
+        "authority": "deterministic-execution-only",
+        "non_claim": "C1-TRUE establishes this exact arithmetic predicate only; it says nothing about coordination, intent, guilt, or the AMCU finding.",
+    }
+
     checks = [
         {"id": "manifest-shape", "status": "PASS", "value": manifest["template"]},
         {"id": "official-scope", "status": "PASS", "value": sorted(records)},
         {"id": "expected-value-exact-sum", "status": "PASS", "value": format(exact_sum, ".2f")},
+        {
+            "id": "expected-value-sigma-replay",
+            "status": "PASS",
+            "value": {
+                "profile": PROFILE_ID,
+                "term_hash": sigma_execution["term_hash"],
+                "verdict": sigma_execution["verdict"],
+                "atp_spent": sigma_execution["atp_spent"],
+            },
+        },
         {
             "id": "official-prose-amount-gap",
             "status": "PASS",
@@ -139,26 +188,31 @@ def build_report() -> dict[str, object]:
         },
         {"id": "decision-scope-binding", "status": "PASS", "value": "535-р"},
     ]
-    return {
+    report = {
         "schema": "decision-archaeology.check-report@v0",
         "case_id": manifest["id"],
         "input": "sources/prozorro-projection.json",
         "checks": checks,
         "summary": {"passed": len(checks), "failed": 0},
     }
+    return report, sigma_receipt
 
 
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--write-report", action="store_true")
     args = parser.parse_args()
-    report = build_report()
+    report, sigma_receipt = build_report()
     artifact_path = CASE_ROOT / "artifacts" / "check-report.json"
     rendered = json.dumps(report, ensure_ascii=False, indent=2) + "\n"
+    receipt_path = CASE_ROOT / "receipts" / "sigma-money-add-eq-v0.json"
+    rendered_receipt = json.dumps(sigma_receipt, ensure_ascii=False, indent=2) + "\n"
     if args.write_report:
         artifact_path.write_text(rendered)
+        receipt_path.write_text(rendered_receipt)
     else:
         require(artifact_path.read_text() == rendered, "committed check report is stale")
+        require(receipt_path.read_text() == rendered_receipt, "committed Sigma receipt is stale")
     print(f"PASS: {report['summary']['passed']}/{len(report['checks'])} deterministic checks")
     return 0
 

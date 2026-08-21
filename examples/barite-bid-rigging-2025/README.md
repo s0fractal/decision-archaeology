@@ -51,6 +51,12 @@ availability is not allowed to turn a frozen case green or red silently.
   `336,491,711.70 UAH`. The AMCU news page states `336,491,711 UAH`; those values
   differ by `0.70 UAH` and must not be described as byte-for-byte or decimal
   equality.
+- **DERIVATION — portable exact-sum check:** the application-owned
+  `sigma-money-add-eq@v0` profile compiles the two API values and their exact sum
+  to a claim-bound Sigma-Glyph term. The committed execution receipt reaches
+  C1-TRUE under the pinned `sigma-glyph==0.6.7` evaluator. This proves only the
+  arithmetic predicate; it says nothing about coordination or the authority's
+  finding.
 - **REFUTATION:** the exactly `1 UAH/t` price difference in the second tender is
   between company IDs `35341905` and `37351098` (Torhova Trubna Kompaniia and
   Alfa Liuks), not between the two AMCU respondents. It is not a valid shortcut
@@ -65,7 +71,8 @@ availability is not allowed to turn a frozen case green or red silently.
 
 See [`claims/claims.jsonl`](claims/claims.jsonl), the reconstructed
 [`decision event`](decisions/amcu-535-r.json), and the generated
-[`check report`](artifacts/check-report.json).
+[`check report`](artifacts/check-report.json). The exact-sum execution is frozen
+separately as a [`Sigma receipt`](receipts/sigma-money-add-eq-v0.json).
 
 ## Limitations
 

@@ -1,0 +1,118 @@
+{
+  "schema": "decision-archaeology.sigma-money-add-eq-vectors@v0",
+  "profile": "decision-archaeology.sigma-money-add-eq@v0",
+  "vectors": [
+    {
+      "id": "small-true",
+      "claim": {
+        "schema": "decision-archaeology.sigma-money-add-eq@v0",
+        "unit": "UAH",
+        "decimal_places": 2,
+        "addends": [
+          "1.00",
+          "2.00"
+        ],
+        "expected": "3.00"
+      },
+      "expected": {
+        "profile": "decision-archaeology.sigma-money-add-eq@v0",
+        "sigma_glyph": {
+          "package": "sigma-glyph",
+          "version": "0.6.7",
+          "revision": "16a1355142d0234ba0dcc519d674bb26b42a1d82"
+        },
+        "claim_sha256": "f8e0efe36ef02ca7cb2366b5972ecf4d5255f412853bbec7a0054efb08cd1725",
+        "bound_claim_atom": "7e89757165bb96394c0883b5fc55d66e82bee4542bb26a8da29d9b1e00d6c6cc",
+        "term_hash": "2d403f6bce0f8640fceaf76e73364614c8209023aef6a2be2f8ee0eca94a0cea",
+        "result_hash": "bed95fbc7ccd2cf53d3562138a69a90a9c38de9f7a23d9015eef1b6638d4eb1d",
+        "verdict": "C1-TRUE",
+        "atp_budget": 1000000,
+        "atp_spent": 405540
+      }
+    },
+    {
+      "id": "barite-published-true",
+      "claim": {
+        "schema": "decision-archaeology.sigma-money-add-eq@v0",
+        "unit": "UAH",
+        "decimal_places": 2,
+        "addends": [
+          "178530840.00",
+          "157960871.70"
+        ],
+        "expected": "336491711.70"
+      },
+      "expected": {
+        "profile": "decision-archaeology.sigma-money-add-eq@v0",
+        "sigma_glyph": {
+          "package": "sigma-glyph",
+          "version": "0.6.7",
+          "revision": "16a1355142d0234ba0dcc519d674bb26b42a1d82"
+        },
+        "claim_sha256": "e7a7ccf6bb6d76bef9eb979b92bd9c222f59474a8b64ee3b29f7a6c45b583460",
+        "bound_claim_atom": "4feec6a3dac879a83827964978dc59255ad7555f8de83914d27cf632c00e1e34",
+        "term_hash": "293c4942f543d7224e34eb3ff9353588d5da67e34048d4decf3826e431415c57",
+        "result_hash": "bed95fbc7ccd2cf53d3562138a69a90a9c38de9f7a23d9015eef1b6638d4eb1d",
+        "verdict": "C1-TRUE",
+        "atp_budget": 1000000,
+        "atp_spent": 203530
+      }
+    },
+    {
+      "id": "barite-one-minor-unit-false",
+      "claim": {
+        "schema": "decision-archaeology.sigma-money-add-eq@v0",
+        "unit": "UAH",
+        "decimal_places": 2,
+        "addends": [
+          "178530840.00",
+          "157960871.70"
+        ],
+        "expected": "336491711.69"
+      },
+      "expected": {
+        "profile": "decision-archaeology.sigma-money-add-eq@v0",
+        "sigma_glyph": {
+          "package": "sigma-glyph",
+          "version": "0.6.7",
+          "revision": "16a1355142d0234ba0dcc519d674bb26b42a1d82"
+        },
+        "claim_sha256": "0d2c4760fc5e829b5d5c68725b52a49ce208e15c4ebbd6dc54e981e795233228",
+        "bound_claim_atom": "a38733f7990c2f37f6b38f26028231ff07f31e907f35c877e8538a20d74bad31",
+        "term_hash": "232ffffaf0dba427570dd10023e6889b4b1fb3e2b25b3a47dda4fb0ce87c69b0",
+        "result_hash": "65cd957fee7ec9fb310bc9d9712cec1726c78f8026fda679ac8f237938a32098",
+        "verdict": "C1-FALSE",
+        "atp_budget": 1000000,
+        "atp_spent": 12867
+      }
+    },
+    {
+      "id": "u64-long-carry-true",
+      "claim": {
+        "schema": "decision-archaeology.sigma-money-add-eq@v0",
+        "unit": "COUNT",
+        "decimal_places": 0,
+        "addends": [
+          "9223372036854775807",
+          "1"
+        ],
+        "expected": "9223372036854775808"
+      },
+      "expected": {
+        "profile": "decision-archaeology.sigma-money-add-eq@v0",
+        "sigma_glyph": {
+          "package": "sigma-glyph",
+          "version": "0.6.7",
+          "revision": "16a1355142d0234ba0dcc519d674bb26b42a1d82"
+        },
+        "claim_sha256": "dd5e3822217112aea1d654f613b03275afda598db02639bd144340b76a10c5da",
+        "bound_claim_atom": "2db09d5a500b24f7bf560cf0c8de481312ffd93ba93de4769672cc46130a6d72",
+        "term_hash": "dc3bcca621e2d872d31b085fb3cb981aa4fd1fbbd69fbbe4079f402b71597269",
+        "result_hash": "bed95fbc7ccd2cf53d3562138a69a90a9c38de9f7a23d9015eef1b6638d4eb1d",
+        "verdict": "C1-TRUE",
+        "atp_budget": 1000000,
+        "atp_spent": 777460
+      }
+    }
+  ]
+}

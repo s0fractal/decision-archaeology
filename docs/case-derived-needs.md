@@ -23,6 +23,12 @@ owner disposition. The complete investigation stays in Decision Archaeology.
 7. Pin the released or exact resolved dependency in the case and replay it.
 8. Record an outcome receipt linking both repository revisions.
 
+The closing artifact is `decision-archaeology.need-outcome@v0` under
+`outcomes/`. It pins the target disposition, the exact resolution revision and
+artifact digests, and one literal case replay. Outcome status records whether
+the blocked operation was resolved; it does not upgrade routing into protocol
+adoption or the case result into substantive truth.
+
 GitHub issues may mirror the packet for notification and discussion, but they
 are mutable control-plane records and are never the source of truth.
 
