@@ -16,8 +16,13 @@ import hashlib
 import json
 import re
 import subprocess
+import sys
 from datetime import datetime
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from tools.history import deleted_since_first_commit  # noqa: E402
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -200,12 +205,19 @@ def validate_outcome(outcome_path: Path, verify_content: bool) -> None:
         nonempty(claim, f"outcome.non_claims[{index}]")
 
 
+def no_outcome_was_deleted(root: Path) -> None:
+    gone = deleted_since_first_commit(root, "outcomes/")
+    require(not gone, f"{gone}: recorded outcomes were deleted; a closed need stays "
+                      "closed in the record, whatever happened afterwards")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("outcomes", nargs="+", type=Path)
     parser.add_argument("--no-artifact-content", action="store_true",
                         help="validate structure only, without reading pinned blobs")
     args = parser.parse_args()
+    no_outcome_was_deleted(REPO_ROOT)
     for outcome_path in args.outcomes:
         validate_outcome(outcome_path, not args.no_artifact_content)
         print(f"PASS: {outcome_path}")

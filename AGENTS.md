@@ -30,8 +30,11 @@ prove nothing about agreement between strangers, which is what a profile is for.
 A case records what it does not establish as data, not as prose. `exclusions.md`
 is rendered from `exclusions.json`, an absence that nothing would resolve is a
 claim rather than a limitation, and an exclusion leaves the record only by being
-retired with a reason. The same rule governs a source's witness: absence must be
-declared, never produced by deletion.
+retired with a reason. The same rule governs a source's witness, a candidate's gate requirements, and a
+recorded outcome: absence must be declared, never produced by deletion. Each of
+those guards reads every committed revision of its own record, because a guard
+compared against `HEAD` protects an uncommitted working tree and stops protecting
+anything the moment the change is committed.
 
 Keep facts, hypotheses, and speculation distinguishable. Generated artifacts
 must retain links to their inputs and transformations. Do not describe a draft,

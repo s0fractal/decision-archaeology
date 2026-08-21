@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import copy
 import json
 import shutil
 import sys
@@ -12,7 +13,9 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 
+from tests.gitfixture import commit, repository  # noqa: E402
 from tools.admission_gate import render, validate  # noqa: E402
+from tools.history import committed_versions  # noqa: E402
 
 CANDIDATE = REPO_ROOT / "candidates" / "kherson-fortifications"
 
@@ -76,21 +79,60 @@ def main() -> int:
         rejected(lambda: validate(scaffold(root / "stray", stray)),
                  "awaiting material the inventory does not record")
 
+        outside = copy.deepcopy(gate)
+        escaped = outside["requirements"][0]
+        escaped.update({"status": "met", "evidence": ["/etc/hosts"]})
+        escaped.pop("open_because")
+        rejected(lambda: validate(scaffold(root / "outside", outside)),
+                 "an absolute path outside the repository offered as evidence")
+
+        traversal = copy.deepcopy(gate)
+        escaping = traversal["requirements"][0]
+        escaping.update({"status": "met", "evidence": ["../../etc/hosts"]})
+        escaping.pop("open_because"); escaping.pop("awaiting")
+        rejected(lambda: validate(scaffold(root / "traversal", traversal)),
+                 "evidence that climbs out of the repository")
+
+        closed = copy.deepcopy(gate)
+        still_awaiting = closed["requirements"][0]
+        still_awaiting.update({"status": "met",
+                               "evidence": ["candidate.suspilne.counterposition"]})
+        still_awaiting.pop("open_because")
+        rejected(lambda: validate(scaffold(root / "closed", closed)),
+                 "a met requirement still awaiting missing material")
+
         untick = json.loads(json.dumps(gate))
         for item in untick["requirements"]:
             if item["id"] == "AG-006":
                 item["status"] = "unmet"
                 item["open_because"] = "quietly withdrawn"
                 item.pop("evidence", None)
-        rejected(lambda: validate(scaffold(root / "untick", untick), previous=gate),
+        rejected(lambda: validate(scaffold(root / "untick", untick), history=[gate]),
                  "a met requirement un-ticked without being reopened")
+
+        # after a commit, a HEAD comparison compares the record with itself
+        committed = repository(root / "committed")
+        candidate = committed / "kherson-fortifications"
+        candidate.mkdir(parents=True, exist_ok=True)
+        shutil.copy(CANDIDATE / "source-inventory.json", candidate / "source-inventory.json")
+        commit(committed, {candidate / "admission.json": gate,
+                           candidate / "admission.md": render(gate, "NOT ADMITTED")}, "gate")
+        removed = copy.deepcopy(gate)
+        removed["requirements"] = [item for item in removed["requirements"]
+                                   if item["id"] != "AG-008"]
+        commit(committed, {candidate / "admission.json": removed,
+                           candidate / "admission.md": render(removed, "NOT ADMITTED")},
+               "drop AG-008")
+        rejected(lambda: validate(candidate / "admission.json",
+                                  history=committed_versions(candidate / "admission.json")),
+                 "an open requirement deleted in a later commit")
 
         drifted = json.loads(json.dumps(gate))
         rejected(lambda: validate(scaffold(root / "drifted", drifted,
                                            prose="# Admission gate\n\nAll good.\n")),
                  "prose that drifted from the record")
 
-    print("ADMISSION-GATE-BOUNDARY: ALL PASS (7/7)")
+    print("ADMISSION-GATE-BOUNDARY: ALL PASS (11/11)")
     return 0
 
 
