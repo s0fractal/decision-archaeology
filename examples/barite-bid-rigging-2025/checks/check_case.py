@@ -42,7 +42,7 @@ def check_manifest() -> dict[str, object]:
         is not None,
         "invalid template identity",
     )
-    require(manifest["template"] == "decision-archaeology.case-template@v0.1.0", "unexpected template")
+    require(manifest["template"] == "decision-archaeology.case-template@v0.2.0", "unexpected template")
     require(manifest["status"] == "active", "published example must be active")
     require(manifest["visibility"] == "public", "case visibility must be public")
     require(set(manifest) <= set(schema["properties"]), "case.json contains unknown schema fields")
@@ -70,9 +70,12 @@ def check_manifest() -> dict[str, object]:
     for path_name, relative_path in manifest["paths"].items():
         expected = schema["properties"]["paths"]["properties"][path_name]["const"]
         require(relative_path == expected, f"wrong {path_name} path")
-        if path_name != "exclusions":
+        if relative_path.endswith("/"):
             require((CASE_ROOT / relative_path).is_dir(), f"missing {relative_path}")
-    require((CASE_ROOT / manifest["paths"]["exclusions"]).is_file(), "missing exclusions file")
+        else:
+            require((CASE_ROOT / relative_path).is_file(), f"missing {relative_path}")
+    require(manifest["paths"]["exclusions_index"] == "exclusions.json",
+            "a v0.2.0 case must record its absences as data, not only as prose")
     return manifest
 
 

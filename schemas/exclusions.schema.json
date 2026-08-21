@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/s0fractal/decision-archaeology/blob/main/schemas/exclusions.schema.json",
+  "title": "Decision Archaeology case exclusions",
+  "description": "What a case does not establish, why, and what would change it. Absence is recorded as a fact with a boundary, never left to the reader to infer from silence.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "case_id", "authority", "exclusions"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "schema": { "const": "decision-archaeology.exclusions@v0" },
+    "case_id": { "type": "string", "pattern": "^[a-z0-9]+(?:[._-][a-z0-9]+)*$" },
+    "authority": { "const": "recorded-absence-only" },
+    "exclusions": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/exclusion" }
+    },
+    "retired": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "reason", "retired_at"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "reason": { "type": "string", "minLength": 1 },
+          "retired_at": { "type": "string", "format": "date-time" }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "exclusion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "subject", "statement"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^EX-[0-9]{3}$" },
+        "kind": {
+          "enum": [
+            "not-located",
+            "access-restricted",
+            "reported-only",
+            "deliberately-minimized",
+            "method-limited",
+            "non-probative",
+            "out-of-scope"
+          ]
+        },
+        "subject": { "type": "string", "minLength": 1 },
+        "statement": { "type": "string", "minLength": 1 },
+        "search_boundary": { "type": "string", "minLength": 1 },
+        "restriction_basis": { "type": "string", "minLength": 1 },
+        "reported_by": { "type": "string", "minLength": 1 },
+        "minimization_basis": { "type": "string", "minLength": 1 },
+        "method": { "type": "string", "minLength": 1 },
+        "not_examined": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "would_resolve": { "type": "string", "minLength": 1 },
+        "affects": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    }
+  }
+}

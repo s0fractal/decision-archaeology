@@ -38,6 +38,13 @@ run = 'uv run --project toolchain --frozen python examples/barite-bid-rigging-20
 description = "Detect drift in the two official Prozorro source records"
 run = 'python examples/barite-bid-rigging-2025/checks/refresh_sources.py --check'
 
+[tasks."case:barite:exclusions"]
+description = "Validate the case's recorded absences and keep its prose bound to them"
+run = '''
+python tools/validate_exclusions.py examples/barite-bid-rigging-2025
+python tests/validate_exclusions_test.py
+'''
+
 [tasks."case:barite:acquisition"]
 description = "Validate the committed retrievability and custody state of the case's sources"
 run = '''
@@ -80,4 +87,4 @@ python tests/validate_need_outcome_test.py
 
 [tasks.check]
 description = "Run the repository offline reproducibility gate"
-depends = ["toolchain:check", "case:barite", "case:barite:acquisition", "needs:check", "profile:sigma-money-add-eq", "profiles:check", "adapters:warrant", "outcomes:check"]
+depends = ["toolchain:check", "case:barite", "case:barite:exclusions", "case:barite:acquisition", "needs:check", "profile:sigma-money-add-eq", "profiles:check", "adapters:warrant", "outcomes:check"]

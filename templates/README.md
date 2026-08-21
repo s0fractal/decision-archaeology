@@ -15,5 +15,7 @@ also require a new schema identity.
 Published templates:
 
 - [`case/v0.1.0/`](case/v0.1.0/README.md) — investigation case;
+- [`case/v0.2.0/`](case/v0.2.0/README.md) — investigation case, with
+  recorded absences (`exclusions.json`);
 - [`need/v0.1.0/`](need/v0.1.0/request.md) — evidence-bound demand packet for
   the repository that owns a blocked capability.
