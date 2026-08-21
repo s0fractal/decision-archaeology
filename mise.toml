@@ -47,6 +47,11 @@ description = "Replay the case-derived Sigma money-add-equality profile vectors"
 depends = ["toolchain:sync"]
 run = 'uv run --project toolchain --frozen python profiles/sigma_money_add_eq_v0.py'
 
+[tasks."profile:doc-replay"]
+description = "Rebuild the profile vectors from the published construction listing alone"
+depends = ["toolchain:sync"]
+run = 'uv run --project toolchain --frozen python tests/profile_doc_replay_test.py'
+
 [tasks."outcomes:check"]
 description = "Validate closed need outcomes and their immutable local artifacts"
 run = '''
@@ -56,4 +61,4 @@ python tests/validate_need_outcome_test.py
 
 [tasks.check]
 description = "Run the repository offline reproducibility gate"
-depends = ["toolchain:check", "case:barite", "needs:check", "profile:sigma-money-add-eq", "outcomes:check"]
+depends = ["toolchain:check", "case:barite", "needs:check", "profile:sigma-money-add-eq", "profile:doc-replay", "outcomes:check"]

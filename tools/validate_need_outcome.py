@@ -1,5 +1,12 @@
 #!/usr/bin/env python3
-"""Validate need outcome receipts and their local immutable artifacts."""
+"""Validate need outcome receipts against the revisions they pin.
+
+Artifact digests are checked against the blob at the outcome's own
+`resolution.revision`, never against the working tree. An outcome is a record of
+what resolved a need at a point in history; a later improvement to a resolved
+artifact must not be able to break it, because the only cheap way to "fix" that
+failure is to rewrite the record until it matches the present.
+"""
 
 from __future__ import annotations
 
@@ -7,6 +14,7 @@ import argparse
 import hashlib
 import json
 import re
+import subprocess
 from datetime import datetime
 from pathlib import Path
 
@@ -61,25 +69,40 @@ def load_object(outcome_path: Path) -> dict[str, object]:
     return outcome
 
 
-def artifact(value: object, label: str, verify_local: bool) -> None:
+def blob_at_revision(revision: str, relative: Path, label: str) -> bytes:
+    """Read one path as it existed at an exact revision of this repository."""
+    result = subprocess.run(
+        ["git", "-C", str(REPO_ROOT), "cat-file", "blob", f"{revision}:{relative.as_posix()}"],
+        capture_output=True,
+    )
+    require(
+        result.returncode == 0,
+        f"{label}: cannot read {relative.as_posix()} at {revision}. The pinned "
+        "revision and path must exist in this checkout; a shallow clone needs "
+        "full history (actions/checkout with fetch-depth: 0).",
+    )
+    return result.stdout
+
+
+def artifact(value: object, label: str, revision: str | None) -> None:
     require(isinstance(value, dict), f"{label}: expected object")
     exact_keys(value, {"path", "sha256"}, label)
     nonempty(value["path"], f"{label}.path")
     require(HEX64.fullmatch(str(value["sha256"])) is not None,
             f"{label}.sha256: expected SHA-256")
-    if verify_local:
-        relative = Path(str(value["path"]))
-        require(not relative.is_absolute() and ".." not in relative.parts,
-                f"{label}: path must remain inside the repository")
-        artifact_path = (REPO_ROOT / relative).resolve()
-        require(artifact_path.is_relative_to(REPO_ROOT.resolve()),
-                f"{label}: resolved path escapes the repository")
-        require(artifact_path.is_file(), f"{label}: local artifact is missing")
-        actual = hashlib.sha256(artifact_path.read_bytes()).hexdigest()
-        require(actual == value["sha256"], f"{label}: local artifact digest changed")
+    if revision is None:
+        return
+    relative = Path(str(value["path"]))
+    require(not relative.is_absolute() and ".." not in relative.parts,
+            f"{label}: path must remain inside the repository")
+    require((REPO_ROOT / relative).resolve().is_relative_to(REPO_ROOT.resolve()),
+            f"{label}: resolved path escapes the repository")
+    actual = hashlib.sha256(blob_at_revision(revision, relative, label)).hexdigest()
+    require(actual == value["sha256"],
+            f"{label}: digest does not match the artifact at {revision}")
 
 
-def validate_outcome(outcome_path: Path, verify_local: bool) -> None:
+def validate_outcome(outcome_path: Path, verify_content: bool) -> None:
     outcome = load_object(outcome_path)
     exact_keys(
         outcome,
@@ -109,7 +132,7 @@ def validate_outcome(outcome_path: Path, verify_local: bool) -> None:
             "target.repository: expected HTTPS repository")
     require(HEX40.fullmatch(str(target["disposition_revision"])) is not None,
             "target.disposition_revision: expected exact commit")
-    artifact(target["disposition"], "target.disposition", False)
+    artifact(target["disposition"], "target.disposition", None)   # another repository
 
     resolution = outcome["resolution"]
     require(isinstance(resolution, dict), "resolution: expected object")
@@ -123,15 +146,16 @@ def validate_outcome(outcome_path: Path, verify_local: bool) -> None:
     nonempty(resolution["profile"], "resolution.profile")
     require(isinstance(resolution["artifacts"], list) and resolution["artifacts"],
             "resolution.artifacts: expected non-empty list")
+    pinned = str(resolution["revision"]) if verify_content else None
     for index, value in enumerate(resolution["artifacts"]):
-        artifact(value, f"resolution.artifacts[{index}]", verify_local)
+        artifact(value, f"resolution.artifacts[{index}]", pinned)
 
     replay = outcome["replay"]
     require(isinstance(replay, dict), "replay: expected object")
     exact_keys(replay, {"case_id", "command", "expected", "receipt"}, "replay")
     for field in ("case_id", "command", "expected"):
         nonempty(replay[field], f"replay.{field}")
-    artifact(replay["receipt"], "replay.receipt", verify_local)
+    artifact(replay["receipt"], "replay.receipt", pinned)
 
     datetime.fromisoformat(str(outcome["recorded_at"]).replace("Z", "+00:00"))
     nonempty(outcome["producer"], "outcome.producer")
@@ -145,10 +169,11 @@ def validate_outcome(outcome_path: Path, verify_local: bool) -> None:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("outcomes", nargs="+", type=Path)
-    parser.add_argument("--no-local-artifacts", action="store_true")
+    parser.add_argument("--no-artifact-content", action="store_true",
+                        help="validate structure only, without reading pinned blobs")
     args = parser.parse_args()
     for outcome_path in args.outcomes:
-        validate_outcome(outcome_path, not args.no_local_artifacts)
+        validate_outcome(outcome_path, not args.no_artifact_content)
         print(f"PASS: {outcome_path}")
     return 0
 
