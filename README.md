@@ -72,7 +72,8 @@ full dossier and its interpretation boundaries remain here.
 The first completed routing decision, `DA-SIGMA-0001`, resolved to the narrow
 application-owned [`sigma-money-add-eq@v0`](profiles/sigma-money-add-eq-v0.md)
 profile. This records a reproducible adapter boundary, not a Sigma-Glyph
-protocol extension.
+protocol extension. Its exact cross-repository closure is preserved in the
+[`DA-SIGMA-0001` outcome receipt](outcomes/DA-SIGMA-0001.json).
 
 ## Reproducible toolchain
 

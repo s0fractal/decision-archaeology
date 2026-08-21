@@ -1,0 +1,51 @@
+{
+  "$schema": "../schemas/need-outcome.schema.json",
+  "schema": "decision-archaeology.need-outcome@v0",
+  "request_id": "DA-SIGMA-0001",
+  "status": "fulfilled",
+  "classification": "application-adapter",
+  "target": {
+    "repository": "https://github.com/s0fractal/sigma-glyph",
+    "disposition_revision": "83991f7e030f3742d3e7934b08931552138b10a6",
+    "disposition": {
+      "path": "needs/DA-SIGMA-0001-numeral-encoding-profile/disposition.json",
+      "sha256": "0386e989fff36cadfe46e183fd3aa87cfee1a620cb779971015753f269512890"
+    }
+  },
+  "resolution": {
+    "repository": "https://github.com/s0fractal/decision-archaeology",
+    "revision": "47048acaf782c29dc478d62a1e041345351ebbe1",
+    "profile": "decision-archaeology.sigma-money-add-eq@v0",
+    "artifacts": [
+      {
+        "path": "profiles/sigma-money-add-eq-v0.md",
+        "sha256": "47af59eef9e99703e7cd3a701722df947327e95a272d8474e88b2567294becf6"
+      },
+      {
+        "path": "profiles/sigma_money_add_eq_v0.py",
+        "sha256": "fc1f6d9f34c3ddb216e47159cde5b2ba043f5402adaa4a6f247d221c8a1f5475"
+      },
+      {
+        "path": "profiles/sigma_money_add_eq_v0.vectors.json",
+        "sha256": "64b019c2efe5de8f61709d67119ed0b5e701322791c6ab66de1031a78532c8a9"
+      }
+    ]
+  },
+  "replay": {
+    "case_id": "barite-bid-rigging-2025",
+    "command": "mise run case:barite",
+    "expected": "PASS: 9/9 deterministic checks; expected-value-sigma-replay is C1-TRUE at term 293c4942f543d7224e34eb3ff9353588d5da67e34048d4decf3826e431415c57",
+    "receipt": {
+      "path": "examples/barite-bid-rigging-2025/receipts/sigma-money-add-eq-v0.json",
+      "sha256": "601018b92869f940b8653aaf2043f92367ad004d32c575ce5bdff0cc85d12708"
+    }
+  },
+  "recorded_at": "2026-08-21T11:59:37Z",
+  "producer": "Codex, continuing the user-authorized case-derived needs loop",
+  "authority": "outcome-linkage-only",
+  "non_claims": [
+    "This outcome records that the blocked arithmetic operation is reproducible; it does not establish the procurement case's substantive hypothesis.",
+    "The application-owned profile is not part of the Sigma-Glyph standard and has no special status under Book I.",
+    "Green replay and CI checks are not an independent review or protocol adoption gate."
+  ]
+}
