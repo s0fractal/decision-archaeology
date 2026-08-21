@@ -29,7 +29,7 @@ def rejected(function, label: str) -> None:
 
 def main() -> int:
     validate_outcome(OUTCOME, True)
-    print("OK   valid outcome and local artifact digests")
+    print("OK   valid outcome and pinned artifact digests")
 
     with tempfile.TemporaryDirectory() as temporary:
         temporary_path = Path(temporary)
@@ -53,6 +53,24 @@ def main() -> int:
             "inconsistent status and classification",
         )
 
+        tampered = json.loads(raw)
+        tampered["resolution"]["artifacts"][0]["sha256"] = "0" * 64
+        tampered_path = temporary_path / "tampered.json"
+        tampered_path.write_text(json.dumps(tampered))
+        rejected(
+            lambda: validate_outcome(tampered_path, True),
+            "digest that does not match the pinned revision",
+        )
+
+        unknown = json.loads(raw)
+        unknown["resolution"]["revision"] = "0" * 40
+        unknown_path = temporary_path / "unknown.json"
+        unknown_path.write_text(json.dumps(unknown))
+        rejected(
+            lambda: validate_outcome(unknown_path, True),
+            "resolution revision missing from this checkout",
+        )
+
         traversal = json.loads(raw)
         traversal["resolution"]["artifacts"][0]["path"] = "../outside"
         traversal_path = temporary_path / "traversal.json"
@@ -62,7 +80,7 @@ def main() -> int:
             "repository path traversal",
         )
 
-    print("NEED-OUTCOME-BOUNDARY: ALL PASS (4/4)")
+    print("NEED-OUTCOME-BOUNDARY: ALL PASS (6/6)")
     return 0
 
 
