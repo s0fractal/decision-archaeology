@@ -7,15 +7,23 @@ establish as data — kind, subject, boundary, and what would resolve it — and
 readable `exclusions.md` is rendered from that record rather than written beside
 it. An exclusion cannot vanish either: dropping one requires retiring it with a
 reason, the same rule that governs a witness and an outcome receipt.
+
+That last rule is checked against the record's whole history, not against `HEAD`.
+Comparing a record to `HEAD` guards an uncommitted working tree and nothing else,
+because after the commit `HEAD` is the change.
 """
 
 from __future__ import annotations
 
 import argparse
 import json
-import subprocess
+import sys
 from datetime import datetime
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from tools.history import committed_versions  # noqa: E402
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 SCHEMA = "decision-archaeology.exclusions@v0"
@@ -43,16 +51,6 @@ KIND_ORDER = list(HEADINGS)
 def require(condition: bool, message: str) -> None:
     if not condition:
         raise ValueError(message)
-
-
-def previously_committed(path: Path) -> dict | None:
-    try:
-        relative = path.resolve().relative_to(REPO_ROOT)
-    except ValueError:
-        return None
-    result = subprocess.run(["git", "-C", str(REPO_ROOT), "show", f"HEAD:{relative.as_posix()}"],
-                            capture_output=True)
-    return json.loads(result.stdout) if result.returncode == 0 else None
 
 
 def render(record: dict) -> str:
@@ -94,10 +92,13 @@ def render(record: dict) -> str:
     return "\n".join(lines).rstrip("\n") + "\n"
 
 
-def validate(record_path: Path, prose_path: Path, previous: dict | None = None,
+def validate(record_path: Path, prose_path: Path, history: list[dict] | None = None,
              write: bool = False) -> None:
     record = json.loads(record_path.read_text())
     require(record["schema"] == SCHEMA, "exclusions: wrong schema")
+    require(record["case_id"] == record_path.parent.name,
+            f"exclusions: case_id {record['case_id']!r} does not name the case "
+            f"directory {record_path.parent.name!r}")
     require(record["authority"] == "recorded-absence-only", "exclusions: bad authority")
     require(isinstance(record["exclusions"], list) and record["exclusions"],
             "exclusions: a case that excludes nothing has not looked")
@@ -127,11 +128,16 @@ def validate(record_path: Path, prose_path: Path, previous: dict | None = None,
         datetime.fromisoformat(entry["retired_at"].replace("Z", "+00:00"))
         require(identifier not in seen, f"{identifier}: retired and still listed")
 
-    if previous is not None:
-        for exclusion in previous["exclusions"]:
+    for version in history or []:
+        for exclusion in version.get("exclusions", []):
             identifier = exclusion["id"]
             require(identifier in seen or identifier in retired,
-                    f"{identifier}: an exclusion disappeared without being retired")
+                    f"{identifier}: recorded in an earlier revision and now neither "
+                    "listed nor retired; an absence must be declared, not deleted")
+        for entry in version.get("retired") or []:
+            require(entry["id"] in retired or entry["id"] in seen,
+                    f"{entry['id']}: was retired in an earlier revision and has since "
+                    "been dropped from the record")
 
     rendered = render(record)
     if write:
@@ -155,7 +161,7 @@ def main() -> int:
     arguments = parser.parse_args()
     record_path = arguments.case / "exclusions.json"
     prose_path = arguments.case / "exclusions.md"
-    validate(record_path, prose_path, previously_committed(record_path), arguments.write)
+    validate(record_path, prose_path, committed_versions(record_path), arguments.write)
     return 0
 
 

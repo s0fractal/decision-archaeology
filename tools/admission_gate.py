@@ -13,8 +13,12 @@ from __future__ import annotations
 
 import argparse
 import json
-import subprocess
+import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from tools.history import committed_versions, inside_repository  # noqa: E402
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 SCHEMA = "decision-archaeology.admission-gate@v0"
@@ -43,16 +47,6 @@ def require(condition: bool, message: str) -> None:
         raise ValueError(message)
 
 
-def previously_committed(path: Path) -> dict | None:
-    try:
-        relative = path.resolve().relative_to(REPO_ROOT)
-    except ValueError:
-        return None
-    result = subprocess.run(["git", "-C", str(REPO_ROOT), "show", f"HEAD:{relative.as_posix()}"],
-                            capture_output=True)
-    return json.loads(result.stdout) if result.returncode == 0 else None
-
-
 def render(gate: dict, verdict: str) -> str:
     lines = [f"# Admission gate — {gate['candidate_id']}", "",
              "Rendered from `admission.json`; edit the record, not this file.", "",
@@ -73,7 +67,8 @@ def render(gate: dict, verdict: str) -> str:
     return "\n".join(lines)
 
 
-def validate(gate_path: Path, write: bool = False, previous: dict | None = None) -> str:
+def validate(gate_path: Path, write: bool = False,
+             history: list[dict] | None = None) -> str:
     gate = json.loads(gate_path.read_text())
     require(gate["schema"] == SCHEMA, "admission gate: wrong schema")
     require(gate["authority"] == "publication-eligibility-only",
@@ -105,8 +100,14 @@ def validate(gate_path: Path, write: bool = False, previous: dict | None = None)
                     f"{identifier}: marked met with no evidence; a tick nothing "
                     "resolves is how source scarcity becomes false certainty")
             for reference in references:
-                resolved = reference in sources or (REPO_ROOT / reference).exists()
-                require(resolved, f"{identifier}: evidence {reference!r} resolves to nothing")
+                inside = inside_repository(REPO_ROOT, reference)
+                require(reference in sources or (inside is not None and inside.exists()),
+                        f"{identifier}: evidence {reference!r} resolves to nothing "
+                        "inside this repository")
+            require(not item.get("awaiting"),
+                    f"{identifier}: a met requirement cannot still await missing "
+                    "material; awaiting on a closed item would answer the inventory "
+                    "with nothing")
         else:
             require(bool(item.get("open_because")),
                     f"{identifier}: an unmet requirement must say what is missing")
@@ -118,6 +119,7 @@ def validate(gate_path: Path, write: bool = False, previous: dict | None = None)
                 unmet.append(identifier)
 
     answered = {reference for item in gate["requirements"]
+                if item["status"] == "unmet" and item.get("blocking", True)
                 for reference in item.get("awaiting", [])}
     for identifier, entry in material.items():
         if entry["status"] in MISSING_STATUSES:
@@ -125,12 +127,21 @@ def validate(gate_path: Path, write: bool = False, previous: dict | None = None)
                     f"{identifier}: recorded as missing and answered by no open "
                     "requirement; missing material must keep a gate item open")
 
-    if previous is not None:
-        was_met = {item["id"] for item in previous["requirements"] if item["status"] == "met"}
-        now_met = {item["id"] for item in gate["requirements"] if item["status"] == "met"}
-        require(not (was_met - now_met - {item["id"] for item in gate.get("reopened", [])}),
-                f"{sorted(was_met - now_met)}: a met requirement was un-ticked without "
-                "being recorded in `reopened`")
+    reopened = {entry["id"]: entry for entry in gate.get("reopened") or []}
+    withdrawn = {entry["id"]: entry for entry in gate.get("withdrawn") or []}
+    for entry in list(reopened.values()) + list(withdrawn.values()):
+        require(bool(entry.get("reason")), f"{entry['id']}: recorded without a reason")
+    now_met = {item["id"] for item in gate["requirements"] if item["status"] == "met"}
+    for version in history or []:
+        for item in version.get("requirements", []):
+            identifier = item["id"]
+            require(identifier in seen or identifier in withdrawn,
+                    f"{identifier}: a requirement recorded in an earlier revision was "
+                    "removed without being withdrawn with a reason")
+            if item["status"] == "met":
+                require(identifier in now_met or identifier in reopened,
+                        f"{identifier}: was met in an earlier revision and is not "
+                        "recorded as reopened")
 
     verdict = "NOT ADMITTED" if unmet else "ADMISSIBLE"
     published = REPO_ROOT / "examples" / gate["candidate_id"]
@@ -159,7 +170,7 @@ def main() -> int:
     parser.add_argument("--write", action="store_true")
     arguments = parser.parse_args()
     gate_path = arguments.candidate / "admission.json"
-    validate(gate_path, arguments.write, previously_committed(gate_path))
+    validate(gate_path, arguments.write, committed_versions(gate_path))
     return 0
 
 

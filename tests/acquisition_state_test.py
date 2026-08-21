@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import copy
 import json
 import sys
 import tempfile
@@ -11,7 +12,9 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 
+from tests.gitfixture import commit, repository  # noqa: E402
 from tools.acquisition_state import validate  # noqa: E402
+from tools.history import committed_versions  # noqa: E402
 
 CASE = REPO_ROOT / "examples" / "barite-bid-rigging-2025" / "sources"
 INDEX = CASE / "source-index.json"
@@ -52,8 +55,25 @@ def main() -> int:
                 entry["custody"] = "unwitnessed"
                 entry["witness"] = None
         rejected(lambda: validate(written(directory, "hidden.json", hidden), INDEX,
-                                  previous=state),
+                                  history=[state]),
                  "a recorded witness dropped without a stated reason")
+
+        # and the same, after the deletion has been committed
+        committed = repository(directory / "committed")
+        sources = committed / "sources"
+        commit(committed, {sources / "acquisition-state.json": state,
+                           sources / "source-index.json": json.loads(INDEX.read_text())},
+               "state")
+        erased = copy.deepcopy(state)
+        for entry in erased["sources"]:
+            if entry["witness"] is not None:
+                entry["witness"] = None
+                entry["custody"] = "unwitnessed"
+        commit(committed, {sources / "acquisition-state.json": erased}, "erase the witness")
+        state_path = sources / "acquisition-state.json"
+        rejected(lambda: validate(state_path, sources / "source-index.json",
+                                  committed_versions(state_path)),
+                 "a witness erased in a later commit")
 
         dropped = json.loads(json.dumps(state))
         dropped["sources"] = dropped["sources"][:-1]
@@ -70,7 +90,7 @@ def main() -> int:
         rejected(lambda: validate(written(directory, "quiet.json", quiet), INDEX),
                  "state published without its interpretation boundaries")
 
-    print("ACQUISITION-STATE-BOUNDARY: ALL PASS (5/5)")
+    print("ACQUISITION-STATE-BOUNDARY: ALL PASS (6/6)")
     return 0
 
 

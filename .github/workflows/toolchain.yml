@@ -15,8 +15,11 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
-          # Outcome receipts verify artifact digests at the revision they pin,
-          # so the gate needs history rather than a single-commit checkout.
+          # Records that guard facts about the past read their own history:
+          # outcome digests resolve at the revision they pin, and exclusions,
+          # witnesses and gate requirements are checked against every revision
+          # of their record. A single-commit checkout would make those guards
+          # compare a record with itself.
           fetch-depth: 0
 
       - name: Install locked tools

@@ -12,7 +12,10 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 
-from tools.validate_need_outcome import load_object, validate_outcome  # noqa: E402
+from tests.gitfixture import commit, repository  # noqa: E402
+from tools.validate_need_outcome import (  # noqa: E402
+    load_object, no_outcome_was_deleted, validate_outcome,
+)
 
 
 OUTCOME = REPO_ROOT / "outcomes" / "DA-SIGMA-0001.json"
@@ -98,7 +101,15 @@ def main() -> int:
             "repository path traversal",
         )
 
-    print("NEED-OUTCOME-BOUNDARY: ALL PASS (8/8)")
+        recorded = repository(temporary_path / "committed")
+        outcome = recorded / "outcomes" / "DA-SIGMA-0001.json"
+        commit(recorded, {outcome: json.loads(raw)}, "record the outcome")
+        outcome.unlink()
+        commit(recorded, {}, "delete the outcome")
+        rejected(lambda: no_outcome_was_deleted(recorded),
+                 "a recorded outcome deleted in a later commit")
+
+    print("NEED-OUTCOME-BOUNDARY: ALL PASS (9/9)")
     return 0
 
 

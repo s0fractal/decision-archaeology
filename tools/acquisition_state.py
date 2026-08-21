@@ -17,15 +17,19 @@ from __future__ import annotations
 
 import argparse
 import gzip
-import subprocess
 import hashlib
 import json
 import urllib.error
 import urllib.parse
 import urllib.request
 import zlib
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from tools.history import committed_versions  # noqa: E402
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 SCHEMA = "decision-archaeology.acquisition-state@v0"
@@ -155,26 +159,10 @@ def refresh(index_path: Path) -> dict:
             "sources": entries}
 
 
-def previously_committed(state_path: Path) -> dict | None:
-    """The last committed version of this record, if the repository holds one.
-
-    A witness is a fact about the past: someone independent held these bytes at
-    that time. Dropping one silently would make the record describe the present
-    instead, which is the failure an outcome receipt already taught us to close.
-    """
-    try:
-        relative = state_path.resolve().relative_to(REPO_ROOT)
-    except ValueError:
-        return None
-    result = subprocess.run(
-        ["git", "-C", str(REPO_ROOT), "show", f"HEAD:{relative.as_posix()}"],
-        capture_output=True)
-    if result.returncode != 0:
-        return None
-    return json.loads(result.stdout)
-
-
-def validate(state_path: Path, index_path: Path, previous: dict | None = None) -> None:
+def validate(state_path: Path, index_path: Path, history: list[dict] | None = None) -> None:
+    """A witness is a fact about the past: someone independent held these bytes
+    at that time. It is checked against every committed revision of this record,
+    because a guard that reads `HEAD` stops guarding the moment it is committed."""
     state = json.loads(state_path.read_text())
     require(state["schema"] == SCHEMA, "acquisition state: wrong schema")
     require(state["authority"] == "retrievability-and-custody-only",
@@ -211,14 +199,15 @@ def validate(state_path: Path, index_path: Path, previous: dict | None = None) -
                     f"{identifier}: publisher-verifiable without a recorded digest")
     require(seen == set(expected), f"acquisition state: sources differ: "
                                    f"{sorted(seen ^ set(expected))}")
-    if previous is not None:
-        witnessed = {entry["id"]: entry for entry in previous["sources"]
-                     if entry.get("witness") is not None}
-        current = {entry["id"]: entry for entry in state["sources"]}
-        for identifier, before in witnessed.items():
+    current = {entry["id"]: entry for entry in state["sources"]}
+    for version in history or []:
+        for before in version.get("sources", []):
+            if before.get("witness") is None:
+                continue
+            identifier = before["id"]
             entry = current.get(identifier)
             require(entry is not None,
-                    f"{identifier}: dropped from a record that witnessed it")
+                    f"{identifier}: dropped from a record that once witnessed it")
             if entry.get("witness") is None:
                 withdrawn = entry.get("witness_withdrawn")
                 require(isinstance(withdrawn, dict) and withdrawn.get("reason"),
@@ -241,12 +230,12 @@ def main() -> int:
     arguments = parser.parse_args()
     index_path = arguments.case / "sources" / "source-index.json"
     state_path = arguments.case / "sources" / "acquisition-state.json"
-    previous = previously_committed(state_path)
+    history = committed_versions(state_path)
     if arguments.refresh:
         state = refresh(index_path)
         state_path.write_text(json.dumps(state, ensure_ascii=False, indent=2) + "\n")
         print(f"refreshed {state_path}")
-    validate(state_path, index_path, previous)
+    validate(state_path, index_path, history)
     return 0
 
 
