@@ -22,6 +22,16 @@
       "value": "336491711.70"
     },
     {
+      "id": "expected-value-sigma-replay",
+      "status": "PASS",
+      "value": {
+        "profile": "decision-archaeology.sigma-money-add-eq@v0",
+        "term_hash": "293c4942f543d7224e34eb3ff9353588d5da67e34048d4decf3826e431415c57",
+        "verdict": "C1-TRUE",
+        "atp_spent": 203530
+      }
+    },
+    {
       "id": "official-prose-amount-gap",
       "status": "PASS",
       "value": "0.70"
@@ -58,7 +68,7 @@
     }
   ],
   "summary": {
-    "passed": 8,
+    "passed": 9,
     "failed": 0
   }
 }

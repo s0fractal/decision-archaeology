@@ -1,0 +1,35 @@
+{
+  "schema": "decision-archaeology.sigma-check-receipt@v0",
+  "case_id": "barite-bid-rigging-2025",
+  "check_id": "expected-value-exact-sum",
+  "need_id": "DA-SIGMA-0001",
+  "input": "sources/prozorro-projection.json",
+  "input_sha256": "d51615e22cea6c91f57502279f658ad50d0446c93a81fb867d3327a3e3326aa8",
+  "claim": {
+    "schema": "decision-archaeology.sigma-money-add-eq@v0",
+    "unit": "UAH",
+    "decimal_places": 2,
+    "addends": [
+      "178530840.00",
+      "157960871.70"
+    ],
+    "expected": "336491711.70"
+  },
+  "execution": {
+    "profile": "decision-archaeology.sigma-money-add-eq@v0",
+    "sigma_glyph": {
+      "package": "sigma-glyph",
+      "version": "0.6.7",
+      "revision": "16a1355142d0234ba0dcc519d674bb26b42a1d82"
+    },
+    "claim_sha256": "e7a7ccf6bb6d76bef9eb979b92bd9c222f59474a8b64ee3b29f7a6c45b583460",
+    "bound_claim_atom": "4feec6a3dac879a83827964978dc59255ad7555f8de83914d27cf632c00e1e34",
+    "term_hash": "293c4942f543d7224e34eb3ff9353588d5da67e34048d4decf3826e431415c57",
+    "result_hash": "bed95fbc7ccd2cf53d3562138a69a90a9c38de9f7a23d9015eef1b6638d4eb1d",
+    "verdict": "C1-TRUE",
+    "atp_budget": 1000000,
+    "atp_spent": 203530
+  },
+  "authority": "deterministic-execution-only",
+  "non_claim": "C1-TRUE establishes this exact arithmetic predicate only; it says nothing about coordination, intent, guilt, or the AMCU finding."
+}
