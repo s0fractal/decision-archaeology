@@ -56,6 +56,13 @@ python tests/acquisition_state_test.py
 description = "Re-check over the network who can still retrieve the case's sources"
 run = 'python tools/acquisition_state.py examples/barite-bid-rigging-2025 --refresh'
 
+[tasks."candidates:check"]
+description = "Decide candidate admission from the record, and keep quarantine honest"
+run = '''
+python tools/admission_gate.py candidates/kherson-fortifications
+python tests/admission_gate_test.py
+'''
+
 [tasks."needs:check"]
 description = "Validate the immutable evidence-bound need template"
 run = 'python tools/validate_need.py templates/need/v0.1.0'
@@ -87,4 +94,4 @@ python tests/validate_need_outcome_test.py
 
 [tasks.check]
 description = "Run the repository offline reproducibility gate"
-depends = ["toolchain:check", "case:barite", "case:barite:exclusions", "case:barite:acquisition", "needs:check", "profile:sigma-money-add-eq", "profiles:check", "adapters:warrant", "outcomes:check"]
+depends = ["toolchain:check", "case:barite", "case:barite:exclusions", "case:barite:acquisition", "candidates:check", "needs:check", "profile:sigma-money-add-eq", "profiles:check", "adapters:warrant", "outcomes:check"]
