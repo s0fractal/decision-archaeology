@@ -21,7 +21,11 @@ owner disposition. The complete investigation stays in Decision Archaeology.
    canonical owner. If a protocol change is needed, start the target's normal
    proposal and conformance process separately.
 7. Pin the released or exact resolved dependency in the case and replay it.
-8. Record an outcome receipt linking both repository revisions.
+8. Rebuild the resolution from its published description alone, with something
+   that has not read the reference implementation, and reconcile any divergence
+   before closing.
+9. Record an outcome receipt linking both repository revisions and the rebuild
+   that the resolution survived.
 
 The closing artifact is `decision-archaeology.need-outcome@v0` under
 `outcomes/`. It pins the target disposition, the exact resolution revision and
@@ -31,6 +35,21 @@ adoption or the case result into substantive truth.
 
 GitHub issues may mirror the packet for notification and discussion, but they
 are mutable control-plane records and are never the source of truth.
+
+## The rebuild step
+
+Step 8 exists because the loop's failures are invisible to its own tests. When
+`DA-SIGMA-0001` was closed, every vector, replay, and CI check was green, and the
+profile still did not fix the term bytes: rebuilds that followed its published
+text produced `e247e909` and `34cf0dc0` where the reference produced `293c4942`,
+all three answering C1-TRUE. Re-running an author's module confirms the module;
+only re-deriving from what was published tests whether anyone else can arrive at
+the same artifact.
+
+A rebuild is not an independent review. It is written here, by an agent, from a
+document this repository controls. It answers one question — is the published
+description sufficient — and claims nothing about correctness, adoption, or
+outside scrutiny.
 
 ## Promotion gate
 

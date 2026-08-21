@@ -20,6 +20,13 @@ packet records demand and routing only; it is not protocol adoption. Keep the
 full dossier here and transfer only the minimized reproducer, exact revisions,
 artifact digests, and interpretation boundaries.
 
+A profile publishes bytes, not only semantics. Every profile document carries a
+construction listing precise enough to rebuild its frozen vectors, and ships that
+rebuild in `tests/<profile>_doc_replay_test.py`, derived from the listing alone
+and forbidden to import the reference implementation. An outcome that resolves a
+need names the rebuild it survived. Green vectors from the author's own module
+prove nothing about agreement between strangers, which is what a profile is for.
+
 Keep facts, hypotheses, and speculation distinguishable. Generated artifacts
 must retain links to their inputs and transformations. Do not describe a draft,
 experiment, or proposed bridge as adopted or implemented.

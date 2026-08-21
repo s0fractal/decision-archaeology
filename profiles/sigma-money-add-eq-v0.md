@@ -106,7 +106,7 @@ just the semantics.
    genesis `<K>` of step 5 above. The term identity is this root node's hash;
    every intermediate node is stored.
 
-`tests/profile_doc_replay_test.py` rebuilds all frozen vectors from this listing
+`tests/sigma_money_add_eq_v0_doc_replay_test.py` rebuilds all frozen vectors from this listing
 alone, without importing the reference module. It is a doc-derived rebuild in the
 same repository, not an independent implementation or a review gate.
 
@@ -129,7 +129,7 @@ and the doc-derived rebuild keep it closed.
 
 ```sh
 mise run profile:sigma-money-add-eq
-mise run profile:doc-replay
+mise run profiles:check
 ```
 
 Passing vectors establish deterministic agreement with the pinned Python

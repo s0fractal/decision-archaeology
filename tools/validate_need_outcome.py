@@ -11,6 +11,7 @@ failure is to rewrite the record until it matches the present.
 from __future__ import annotations
 
 import argparse
+import ast
 import hashlib
 import json
 import re
@@ -108,12 +109,12 @@ def validate_outcome(outcome_path: Path, verify_content: bool) -> None:
         outcome,
         {
             "$schema", "schema", "request_id", "status", "classification",
-            "target", "resolution", "replay", "recorded_at", "producer",
+            "target", "resolution", "replay", "rebuild", "recorded_at", "producer",
             "authority", "non_claims",
         },
         "outcome",
     )
-    require(outcome["schema"] == "decision-archaeology.need-outcome@v0",
+    require(outcome["schema"] == "decision-archaeology.need-outcome@v1",
             "outcome: wrong schema")
     nonempty(outcome["$schema"], "outcome.$schema")
     require(REQUEST_ID.fullmatch(str(outcome["request_id"])) is not None,
@@ -156,6 +157,39 @@ def validate_outcome(outcome_path: Path, verify_content: bool) -> None:
     for field in ("case_id", "command", "expected"):
         nonempty(replay[field], f"replay.{field}")
     artifact(replay["receipt"], "replay.receipt", pinned)
+
+    rebuild = outcome["rebuild"]
+    require(isinstance(rebuild, dict), "rebuild: expected object")
+    exact_keys(rebuild, {"revision", "path", "sha256", "command", "derived_from",
+                         "excludes"}, "rebuild")
+    require(HEX40.fullmatch(str(rebuild["revision"])) is not None,
+            "rebuild.revision: expected exact commit")
+    for field in ("command", "derived_from"):
+        nonempty(rebuild[field], f"rebuild.{field}")
+    require(str(rebuild["derived_from"]) in {str(value.get("path"))
+                                             for value in resolution["artifacts"]},
+            "rebuild.derived_from: must name one of the resolution artifacts, so the "
+            "rebuild follows a published description rather than private notes")
+    require(isinstance(rebuild["excludes"], list) and rebuild["excludes"],
+            "rebuild.excludes: name at least one implementation the rebuild must not read")
+    for index, excluded in enumerate(rebuild["excludes"]):
+        nonempty(excluded, f"rebuild.excludes[{index}]")
+    if verify_content:
+        artifact({"path": rebuild["path"], "sha256": rebuild["sha256"]},
+                 "rebuild", str(rebuild["revision"]))
+        source = blob_at_revision(str(rebuild["revision"]), Path(str(rebuild["path"])),
+                                  "rebuild")
+        forbidden = {Path(str(name)).stem for name in rebuild["excludes"]}
+        imported = set()
+        for statement in ast.walk(ast.parse(source, filename=str(rebuild["path"]))):
+            if isinstance(statement, ast.Import):
+                imported.update(alias.name for alias in statement.names)
+            elif isinstance(statement, ast.ImportFrom) and statement.module:
+                imported.add(statement.module)
+        offending = {name for name in imported if name.split(".")[-1] in forbidden}
+        require(not offending,
+                f"rebuild: imports what it is supposed to verify independently "
+                f"({', '.join(sorted(offending))})")
 
     datetime.fromisoformat(str(outcome["recorded_at"]).replace("Z", "+00:00"))
     nonempty(outcome["producer"], "outcome.producer")
