@@ -72,7 +72,11 @@ availability is not allowed to turn a frozen case green or red silently.
 See [`claims/claims.jsonl`](claims/claims.jsonl), the reconstructed
 [`decision event`](decisions/amcu-535-r.json), and the generated
 [`check report`](artifacts/check-report.json). The exact-sum execution is frozen
-separately as a [`Sigma receipt`](receipts/sigma-money-add-eq-v0.json).
+separately as a [`Sigma receipt`](receipts/sigma-money-add-eq-v0.json), and the
+same term is carried into Warrant as a re-runnable `ski@v1` reason in the
+[`Warrant reason receipt`](receipts/warrant-ski-reason-v0.json) — the pinned
+`warrant-verify` release re-executes it for the same 203,530 ATP and refuses to
+file a verdict the term does not support.
 
 ## Limitations
 

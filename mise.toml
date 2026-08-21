@@ -55,6 +55,11 @@ uv run --project toolchain --frozen python tools/validate_profile.py
 uv run --project toolchain --frozen python tests/validate_profile_test.py
 '''
 
+[tasks."adapters:warrant"]
+description = "Carry the case's Sigma check into Warrant as a ski@v1 reason and verify the record"
+depends = ["toolchain:sync"]
+run = 'uv run --project toolchain --frozen python adapters/warrant_ski_reason_v0.py'
+
 [tasks."outcomes:check"]
 description = "Validate closed need outcomes and their immutable local artifacts"
 run = '''
@@ -64,4 +69,4 @@ python tests/validate_need_outcome_test.py
 
 [tasks.check]
 description = "Run the repository offline reproducibility gate"
-depends = ["toolchain:check", "case:barite", "needs:check", "profile:sigma-money-add-eq", "profiles:check", "outcomes:check"]
+depends = ["toolchain:check", "case:barite", "needs:check", "profile:sigma-money-add-eq", "profiles:check", "adapters:warrant", "outcomes:check"]
