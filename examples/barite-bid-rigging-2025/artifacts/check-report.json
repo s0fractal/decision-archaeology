@@ -1,0 +1,64 @@
+{
+  "schema": "decision-archaeology.check-report@v0",
+  "case_id": "barite-bid-rigging-2025",
+  "input": "sources/prozorro-projection.json",
+  "checks": [
+    {
+      "id": "manifest-shape",
+      "status": "PASS",
+      "value": "decision-archaeology.case-template@v0.1.0"
+    },
+    {
+      "id": "official-scope",
+      "status": "PASS",
+      "value": [
+        "UA-2025-02-03-015471-a",
+        "UA-2025-03-17-004896-a"
+      ]
+    },
+    {
+      "id": "expected-value-exact-sum",
+      "status": "PASS",
+      "value": "336491711.70"
+    },
+    {
+      "id": "official-prose-amount-gap",
+      "status": "PASS",
+      "value": "0.70"
+    },
+    {
+      "id": "respondents-participated-in-both",
+      "status": "PASS",
+      "value": [
+        "35341905",
+        "45333199"
+      ]
+    },
+    {
+      "id": "defendant-document-md5-intersection",
+      "status": "PASS",
+      "value": 0
+    },
+    {
+      "id": "one-uah-per-tonne-refutation",
+      "status": "PASS",
+      "value": {
+        "delta_uah_per_tonne": "1.00",
+        "compared_company_ids": [
+          "35341905",
+          "37351098"
+        ],
+        "excluded_respondent_company_id": "45333199"
+      }
+    },
+    {
+      "id": "decision-scope-binding",
+      "status": "PASS",
+      "value": "535-р"
+    }
+  ],
+  "summary": {
+    "passed": 8,
+    "failed": 0
+  }
+}

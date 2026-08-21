@@ -28,3 +28,15 @@ fi
 uv run --project toolchain --frozen warrant --help >/dev/null
 echo "warrant-verify $actual"
 '''
+
+[tasks."case:barite"]
+description = "Reproduce the barite calibration case from committed inputs"
+run = 'python examples/barite-bid-rigging-2025/checks/check_case.py'
+
+[tasks."case:barite:live"]
+description = "Detect drift in the two official Prozorro source records"
+run = 'python examples/barite-bid-rigging-2025/checks/refresh_sources.py --check'
+
+[tasks.check]
+description = "Run the repository offline reproducibility gate"
+depends = ["toolchain:check", "case:barite"]

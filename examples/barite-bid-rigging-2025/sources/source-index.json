@@ -1,0 +1,55 @@
+{
+  "schema": "decision-archaeology.source-index@v0-local",
+  "acquired_at": "2026-08-21T01:29:42Z",
+  "sources": [
+    {
+      "id": "source.prozorro.25t-129",
+      "kind": "official-api-record",
+      "authority": "Prozorro",
+      "external_id": "UA-2025-02-03-015471-a",
+      "url": "https://public-api.prozorro.gov.ua/api/2.5/tenders/0a4450deb1e849d9b7a9fed0d5aaaa6a",
+      "human_url": "https://prozorro.gov.ua/tender/UA-2025-02-03-015471-a",
+      "access": "public",
+      "retention": "committed-minimized-projection",
+      "raw_sha256": "352e5b2cfdd03d2e4ca346adb98a2d4e31838750da1af945c82e7195a0913a6e"
+    },
+    {
+      "id": "source.prozorro.25t-198",
+      "kind": "official-api-record",
+      "authority": "Prozorro",
+      "external_id": "UA-2025-03-17-004896-a",
+      "url": "https://public-api.prozorro.gov.ua/api/2.5/tenders/d7e17c2e71d249bd8f021d684d1ec6f3",
+      "human_url": "https://prozorro.gov.ua/tender/UA-2025-03-17-004896-a",
+      "access": "public",
+      "retention": "committed-minimized-projection",
+      "raw_sha256": "747b50a6c296869ac1a0e041bb697878cca9d814ed0dfe45a4ec4a2f71f68fa8"
+    },
+    {
+      "id": "source.amcu.preliminary-findings",
+      "kind": "official-web-page",
+      "authority": "Antimonopoly Committee of Ukraine",
+      "external_id": "145-26.13/35-26/275-спр",
+      "url": "https://amcu.gov.ua/news/informatsiia-pro-poperedni-vysnovky-u-spravi-pro-porushennia-zakonodavstva-pro-zakhyst-ekonomichnoi-konkurentsii-145-261335-26-ta-rozghliad-zaznachenoi-spravy-na-zasidanni-antymonopolnoho",
+      "access": "public",
+      "retention": "referenced-not-snapshotted"
+    },
+    {
+      "id": "source.amcu.final-news",
+      "kind": "official-web-page",
+      "authority": "Antimonopoly Committee of Ukraine",
+      "external_id": "news-2026-07-16-barite",
+      "url": "https://amcu.gov.ua/news/amku-oshtrafuvav-dvi-kompanii-za-zmovu-u-zakupivliakh-barytovoho-kontsentratu-dlia-ukrhazvydobuvannia",
+      "access": "public",
+      "retention": "referenced-not-snapshotted"
+    },
+    {
+      "id": "source.amcu.decision-register-nova",
+      "kind": "official-register-extract",
+      "authority": "Antimonopoly Committee of Ukraine",
+      "external_id": "535-р/45333199",
+      "url": "https://reyestr.amcu.gov.ua/home/getcompliancereport?code=&counter=1650043&dateFrom=01.01.2024&dateTo=&name=&number=",
+      "access": "public-browser-only",
+      "retention": "referenced-not-snapshotted"
+    }
+  ]
+}

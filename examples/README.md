@@ -40,3 +40,13 @@ must point back to the records and transformations that produced it.
 The format is currently `decision-archaeology.case@v0` and is a draft. The
 schema version describes data compatibility; the template version records the
 exact scaffold used to start the case. They are deliberately separate.
+
+## Published examples
+
+- [`barite-bid-rigging-2025/`](barite-bid-rigging-2025/README.md) is the
+  calibration case. It binds an attributed AMCU decision to two public
+  procurement records and includes deterministic refutations of two tempting
+  but misattributed shortcuts.
+
+Investigations that have not passed their source-sufficiency gate live under
+[`candidates/`](../candidates/README.md), outside this publishable case set.

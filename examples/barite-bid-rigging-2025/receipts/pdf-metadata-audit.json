@@ -1,0 +1,21 @@
+{
+  "schema": "decision-archaeology.exploratory-receipt@v0-local",
+  "id": "receipt.pdf-metadata-audit.2026-08-21",
+  "performed_at": "2026-08-21T01:29:42Z",
+  "input_source_ids": ["source.prozorro.25t-129", "source.prozorro.25t-198"],
+  "scope": {
+    "company_ids": ["35341905", "45333199"],
+    "media_type": "application/pdf",
+    "downloaded_files": 59
+  },
+  "procedure": "Download the public PDFs linked from both respondents' bid documents; extract Author, Creator, Producer, CreationDate, and ModDate with pdfinfo; compare the complete non-empty five-field tuple across companies.",
+  "result": {
+    "exact_cross_company_metadata_tuple_matches": 0
+  },
+  "classification": "EXPLORATORY_NULL_RESULT",
+  "limitations": [
+    "Downloaded source bytes are not retained in this repository.",
+    "Absence of an exact metadata tuple is not evidence of independent preparation.",
+    "Archives, signature containers, and non-PDF documents were not recursively examined."
+  ]
+}
