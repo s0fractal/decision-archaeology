@@ -1,0 +1,96 @@
+{
+  "schema": "decision-archaeology.acquisition-state@v0",
+  "case_id": "barite-bid-rigging-2025",
+  "source_index": "source-index.json",
+  "checked_at": "2026-08-21T15:26:26Z",
+  "authority": "retrievability-and-custody-only",
+  "non_claims": [
+    "This records whether a source can still be retrieved and who holds its bytes; it does not establish that any source supports any claim.",
+    "A blocked automated fetch is a fact about this client, not evidence that a publisher withheld anything.",
+    "An archived copy attests bytes a third party captured at a time, not that the publisher served the same bytes to everyone."
+  ],
+  "sources": [
+    {
+      "id": "source.prozorro.25t-129",
+      "url": "https://public-api.prozorro.gov.ua/api/2.5/tenders/0a4450deb1e849d9b7a9fed0d5aaaa6a",
+      "authority": "Prozorro",
+      "access": {
+        "status": "direct",
+        "http_status": 200,
+        "bytes": 877764,
+        "content_type": "application/json",
+        "note": null
+      },
+      "witness": null,
+      "custody": "publisher-verifiable"
+    },
+    {
+      "id": "source.prozorro.25t-198",
+      "url": "https://public-api.prozorro.gov.ua/api/2.5/tenders/d7e17c2e71d249bd8f021d684d1ec6f3",
+      "authority": "Prozorro",
+      "access": {
+        "status": "direct",
+        "http_status": 200,
+        "bytes": 589366,
+        "content_type": "application/json",
+        "note": null
+      },
+      "witness": null,
+      "custody": "publisher-verifiable"
+    },
+    {
+      "id": "source.amcu.preliminary-findings",
+      "url": "https://amcu.gov.ua/news/informatsiia-pro-poperedni-vysnovky-u-spravi-pro-porushennia-zakonodavstva-pro-zakhyst-ekonomichnoi-konkurentsii-145-261335-26-ta-rozghliad-zaznachenoi-spravy-na-zasidanni-antymonopolnoho",
+      "authority": "Antimonopoly Committee of Ukraine",
+      "access": {
+        "status": "blocked",
+        "http_status": 403,
+        "bytes": null,
+        "content_type": null,
+        "note": "HTTP 403 for an automated client"
+      },
+      "witness": null,
+      "custody": "unwitnessed"
+    },
+    {
+      "id": "source.amcu.final-news",
+      "url": "https://amcu.gov.ua/news/amku-oshtrafuvav-dvi-kompanii-za-zmovu-u-zakupivliakh-barytovoho-kontsentratu-dlia-ukrhazvydobuvannia",
+      "authority": "Antimonopoly Committee of Ukraine",
+      "access": {
+        "status": "blocked",
+        "http_status": 403,
+        "bytes": null,
+        "content_type": null,
+        "note": "HTTP 403 for an automated client"
+      },
+      "witness": {
+        "kind": "public-web-archive",
+        "provider": "web.archive.org",
+        "snapshot_url": "http://web.archive.org/web/20260716145251/https://amcu.gov.ua/news/amku-oshtrafuvav-dvi-kompanii-za-zmovu-u-zakupivliakh-barytovoho-kontsentratu-dlia-ukrhazvydobuvannia",
+        "snapshot_timestamp": "20260716145251",
+        "exact_bytes_url": "http://web.archive.org/web/20260716145251id_/https://amcu.gov.ua/news/amku-oshtrafuvav-dvi-kompanii-za-zmovu-u-zakupivliakh-barytovoho-kontsentratu-dlia-ukrhazvydobuvannia",
+        "content_type": "text/html; charset=UTF-8",
+        "content_encoding": "gzip",
+        "raw_bytes": 29869,
+        "raw_sha256": "c960cddc6abb57d908735af1e353241b890aab48aca1172e46ddae53595cd9e2",
+        "decoded_bytes": 228417,
+        "decoded_sha256": "9b4ced45c8062820df6a2a913186a77295793525ae8408fddd0b31fbe2ab4aaf"
+      },
+      "custody": "independently-witnessed"
+    },
+    {
+      "id": "source.amcu.decision-register-nova",
+      "url": "https://reyestr.amcu.gov.ua/home/getcompliancereport?code=&counter=1650043&dateFrom=01.01.2024&dateTo=&name=&number=",
+      "authority": "Antimonopoly Committee of Ukraine",
+      "access": {
+        "status": "blocked",
+        "http_status": 403,
+        "bytes": null,
+        "content_type": null,
+        "note": "HTTP 403 for an automated client"
+      },
+      "witness": null,
+      "custody": "unwitnessed"
+    }
+  ]
+}
