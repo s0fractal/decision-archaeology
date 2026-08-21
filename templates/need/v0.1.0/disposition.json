@@ -1,0 +1,12 @@
+{
+  "$schema": "../../../schemas/need-disposition.schema.json",
+  "schema": "decision-archaeology.need-disposition@v0",
+  "request_id": "DA-TARGET-0001",
+  "status": "untriaged",
+  "owner_surface": "unassigned",
+  "rationale": "No owner-side triage has been recorded.",
+  "next_action": "The target owner should reproduce the packet and route it without implying protocol adoption.",
+  "decided_at": null,
+  "decided_by": null,
+  "authority": "non-normative-routing-only"
+}

@@ -1,0 +1,53 @@
+{
+  "$schema": "../../../schemas/need.schema.json",
+  "schema": "decision-archaeology.need@v0",
+  "template": "decision-archaeology.need-template@v0.1.0",
+  "id": "DA-TARGET-0001",
+  "status": "draft",
+  "source": {
+    "repository": "https://github.com/example/decision-archaeology",
+    "revision": "0000000000000000000000000000000000000000",
+    "case_id": "replace-me",
+    "artifacts": [
+      {
+        "path": "examples/replace-me/artifacts/replace-me.json",
+        "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    ]
+  },
+  "target": {
+    "repository": "https://github.com/example/target",
+    "revision": "0000000000000000000000000000000000000000",
+    "surface": "replace with the narrow owned surface"
+  },
+  "need": {
+    "blocked_operation": "State the exact operation the case cannot reproduce.",
+    "current_behavior": "State what the pinned target currently does.",
+    "required_capability": "State the capability without prescribing an implementation.",
+    "local_workaround": "State the smallest workaround already tested.",
+    "why_workaround_is_insufficient": "State the concrete reproducibility or trust gap.",
+    "candidate_placement": "unknown"
+  },
+  "reproducer": {
+    "command": "replace-with-a-literal-command",
+    "expected": "State the observable result.",
+    "counterexample": "State what would falsify or reroute the request."
+  },
+  "boundaries": {
+    "data_minimization": "List what was deliberately omitted from the target repository.",
+    "non_claims": [
+      "Filing this request does not establish the source case's substantive hypothesis.",
+      "Merging this packet does not adopt a protocol change."
+    ]
+  },
+  "provenance": {
+    "producer": "replace with the human or agent identity",
+    "generated_at": "1970-01-01T00:00:00Z",
+    "authority": "case-derived-demand-only"
+  },
+  "paths": {
+    "narrative": "request.md",
+    "fixtures": "fixtures/",
+    "disposition": "disposition.json"
+  }
+}

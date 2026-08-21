@@ -64,6 +64,11 @@ not a published allegation or completed dossier.
 See [`templates/case/v0.1.0/`](templates/case/v0.1.0/README.md) and the draft
 [`case.schema.json`](schemas/case.schema.json).
 
+When a case exposes a missing capability, it can promote that pressure through
+the versioned [case-derived needs](docs/case-derived-needs.md) loop. The target
+repository receives a minimized reproducer and an owner-side disposition; the
+full dossier and its interpretation boundaries remain here.
+
 ## Reproducible toolchain
 
 Cases must not depend on sibling checkouts of protocol repositories. The root

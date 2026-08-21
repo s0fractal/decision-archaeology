@@ -37,6 +37,10 @@ run = 'python examples/barite-bid-rigging-2025/checks/check_case.py'
 description = "Detect drift in the two official Prozorro source records"
 run = 'python examples/barite-bid-rigging-2025/checks/refresh_sources.py --check'
 
+[tasks."needs:check"]
+description = "Validate the immutable evidence-bound need template"
+run = 'python tools/validate_need.py templates/need/v0.1.0'
+
 [tasks.check]
 description = "Run the repository offline reproducibility gate"
-depends = ["toolchain:check", "case:barite"]
+depends = ["toolchain:check", "case:barite", "needs:check"]
