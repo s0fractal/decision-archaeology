@@ -1,0 +1,58 @@
+{
+  "schema": "decision-archaeology.candidate-source-inventory@v0-local",
+  "candidate_id": "kherson-fortifications",
+  "audited_at": "2026-08-21",
+  "sources": [
+    {
+      "id": "candidate.bihus.investigation",
+      "kind": "investigative-report",
+      "status": "public-attributable",
+      "url": "https://bihus.info/prokladky-i-miljonni-zavyshhennya-czin-yak-kompaniyi-shho-zajmayutsya-fortyfikacziyamy-povyazani-z-op/",
+      "supports": ["reported-280m-scope", "reported-supply-chain", "reported-35m-calculation", "reported-income-link"],
+      "limits": ["underlying contracts and invoices are not attached to the article", "article combines Kherson and Zhytomyr narratives"]
+    },
+    {
+      "id": "candidate.bihus.police-follow-up",
+      "kind": "investigative-outlet-follow-up",
+      "status": "public-attributable-secondary",
+      "url": "https://bihus.info/policziya-vidkryla-provadzhennya-za-syuzhetom-bihus-info-pro-zavyshhennya-czin-na-materialah-dlya-budivnycztva-fortyfikaczij/",
+      "supports": ["reported-proceeding-registration"],
+      "limits": ["the police or prosecutor response is described but not retained as a primary source", "a registered investigation is not a finding of wrongdoing"]
+    },
+    {
+      "id": "candidate.suspilne.counterposition",
+      "kind": "reported-interview",
+      "status": "public-attributable-counterclaim",
+      "url": "https://suspilne.media/kherson/1009201-zodnih-osobistih-zvazkiv-samojlenko-pro-rozsliduvanna-bihusinfo-sodo-budivnictva-fortifikacij-na-hersonsini/",
+      "supports": ["denial-of-personal-or-business-link", "dispute-of-35m-calculation", "reported-restriction-of-acts", "product-scope-dispute"],
+      "limits": ["statements are attributable counterclaims, not independent verification"]
+    }
+  ],
+  "required_material": [
+    {
+      "id": "missing.kherson-contracts",
+      "status": "missing-exact-identity",
+      "description": "Exact authority and contract identifiers for the reported 280 million UAH fortification scope"
+    },
+    {
+      "id": "missing.supply-invoices",
+      "status": "reported-only",
+      "description": "Manufacturer, intermediary, and contractor invoices plus delivery records used in the price comparison"
+    },
+    {
+      "id": "missing.acceptance-acts",
+      "status": "potentially-restricted",
+      "description": "Accepted-work acts and product quantities, with operationally sensitive detail excluded"
+    },
+    {
+      "id": "missing.company-snapshots",
+      "status": "missing-time-bound-snapshot",
+      "description": "Registry evidence for ownership, control, directorship, addresses, and the exact income relationship at relevant dates"
+    },
+    {
+      "id": "missing.proceeding-primary-record",
+      "status": "missing-primary-source",
+      "description": "Official registration response and current procedural status of the reported criminal proceeding"
+    }
+  ]
+}

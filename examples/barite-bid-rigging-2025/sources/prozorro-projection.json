@@ -1,0 +1,227 @@
+{
+  "schema": "decision-archaeology.prozorro-projection@v0-local",
+  "acquired_at": "2026-08-21T01:29:42Z",
+  "records": [
+    {
+      "tender_id": "UA-2025-02-03-015471-a",
+      "internal_id": "0a4450deb1e849d9b7a9fed0d5aaaa6a",
+      "status": "complete",
+      "expected_amount_uah_vat_included": "178530840.00",
+      "items": [
+        {
+          "lot_id": "2df43d4300ab4a5fbc2d46decfb71d8c",
+          "quantity": "11283",
+          "unit_code": "TNE"
+        },
+        {
+          "lot_id": "53e679c12d16452b81e7d2f106c13fb0",
+          "quantity": "250",
+          "unit_code": "TNE"
+        }
+      ],
+      "lots": [
+        {
+          "lot_id": "2df43d4300ab4a5fbc2d46decfb71d8c",
+          "status": "cancelled",
+          "expected_amount_uah_vat_included": "174660840.00"
+        },
+        {
+          "lot_id": "53e679c12d16452b81e7d2f106c13fb0",
+          "status": "complete",
+          "expected_amount_uah_vat_included": "3870000.00"
+        }
+      ],
+      "bids": [
+        {
+          "company_id": "17592071",
+          "company_name": "OksichemK s.r.o.",
+          "submitted_at": "2025-03-05T14:08:50.072332+02:00",
+          "lot_values": [
+            {
+              "lot_id": "2df43d4300ab4a5fbc2d46decfb71d8c",
+              "amount_uah_vat_included": "173674010.00"
+            },
+            {
+              "lot_id": "53e679c12d16452b81e7d2f106c13fb0",
+              "amount_uah_vat_included": "3867500.00"
+            }
+          ]
+        },
+        {
+          "company_id": "32490244",
+          "company_name": "ТОВ \"Епіцентр К\"",
+          "submitted_at": "2025-03-05T14:30:47.411687+02:00",
+          "lot_values": [
+            {
+              "lot_id": "2df43d4300ab4a5fbc2d46decfb71d8c",
+              "amount_uah_vat_included": "157961774.34"
+            },
+            {
+              "lot_id": "53e679c12d16452b81e7d2f106c13fb0",
+              "amount_uah_vat_included": "3649995.00"
+            }
+          ]
+        },
+        {
+          "company_id": "35341905",
+          "company_name": "ТОВ \"ТОРГОВА ТРУБНА КОМПАНІЯ\"",
+          "submitted_at": "2025-03-04T15:46:15.212995+02:00",
+          "lot_values": [
+            {
+              "lot_id": "2df43d4300ab4a5fbc2d46decfb71d8c",
+              "amount_uah_vat_included": "166998000.00"
+            },
+            {
+              "lot_id": "53e679c12d16452b81e7d2f106c13fb0",
+              "amount_uah_vat_included": "3824000.00"
+            }
+          ]
+        },
+        {
+          "company_id": "37351098",
+          "company_name": "ПП \"АЛЬФА ЛЮКС\"",
+          "submitted_at": "2025-03-05T14:51:08.528488+02:00",
+          "lot_values": [
+            {
+              "lot_id": "2df43d4300ab4a5fbc2d46decfb71d8c",
+              "amount_uah_vat_included": "166000000.00"
+            },
+            {
+              "lot_id": "53e679c12d16452b81e7d2f106c13fb0",
+              "amount_uah_vat_included": "3400000.00"
+            }
+          ]
+        },
+        {
+          "company_id": "45333199",
+          "company_name": "ТОВ \"НОВА ІНТЕРПРАЙЗ\"",
+          "submitted_at": "2025-03-05T13:26:43.795657+02:00",
+          "lot_values": [
+            {
+              "lot_id": "2df43d4300ab4a5fbc2d46decfb71d8c",
+              "amount_uah_vat_included": "157960000.00"
+            },
+            {
+              "lot_id": "53e679c12d16452b81e7d2f106c13fb0",
+              "amount_uah_vat_included": "3649000.00"
+            }
+          ]
+        }
+      ],
+      "awards": [
+        {
+          "lot_id": "2df43d4300ab4a5fbc2d46decfb71d8c",
+          "status": "pending",
+          "company_id": "45333199",
+          "amount_uah_vat_included": "157960000.00"
+        },
+        {
+          "lot_id": "53e679c12d16452b81e7d2f106c13fb0",
+          "status": "active",
+          "company_id": "37351098",
+          "amount_uah_vat_included": "3400000.00"
+        }
+      ],
+      "contracts": [
+        {
+          "id": "54d3cf0bdd5b46d78d6e9c00793306b9",
+          "contract_id": "UA-2025-02-03-015471-a-b1",
+          "status": "active",
+          "amount_uah_vat_included": "3399999.00"
+        }
+      ],
+      "defendant_document_hash_intersection": {
+        "company_ids": ["35341905", "45333199"],
+        "count": 0,
+        "hashes": []
+      }
+    },
+    {
+      "tender_id": "UA-2025-03-17-004896-a",
+      "internal_id": "d7e17c2e71d249bd8f021d684d1ec6f3",
+      "status": "complete",
+      "expected_amount_uah_vat_included": "157960871.70",
+      "items": [
+        {
+          "lot_id": "83c65c4893a744bdb8c976d42a51b97d",
+          "quantity": "11283",
+          "unit_code": "TNE"
+        }
+      ],
+      "lots": [
+        {
+          "lot_id": "83c65c4893a744bdb8c976d42a51b97d",
+          "status": "complete",
+          "expected_amount_uah_vat_included": "157960871.70"
+        }
+      ],
+      "bids": [
+        {
+          "company_id": "32490244",
+          "company_name": "ТОВ \"Епіцентр К\"",
+          "submitted_at": "2025-03-25T12:11:38.619585+02:00",
+          "lot_values": [
+            {
+              "lot_id": "83c65c4893a744bdb8c976d42a51b97d",
+              "amount_uah_vat_included": "145437644.34"
+            }
+          ]
+        },
+        {
+          "company_id": "35341905",
+          "company_name": "ТОВ \"ТОРГОВА ТРУБНА КОМПАНІЯ\"",
+          "submitted_at": "2025-03-25T09:53:41.285302+02:00",
+          "lot_values": [
+            {
+              "lot_id": "83c65c4893a744bdb8c976d42a51b97d",
+              "amount_uah_vat_included": "144298287.00"
+            }
+          ]
+        },
+        {
+          "company_id": "37351098",
+          "company_name": "ПП \"АЛЬФА ЛЮКС\"",
+          "submitted_at": "2025-03-25T11:47:44.066203+02:00",
+          "lot_values": [
+            {
+              "lot_id": "83c65c4893a744bdb8c976d42a51b97d",
+              "amount_uah_vat_included": "144309570.00"
+            }
+          ]
+        },
+        {
+          "company_id": "45333199",
+          "company_name": "ТОВ \"НОВА ІНТЕРПРАЙЗ\"",
+          "submitted_at": "2025-03-25T12:48:29.682348+02:00",
+          "lot_values": [
+            {
+              "lot_id": "83c65c4893a744bdb8c976d42a51b97d",
+              "amount_uah_vat_included": "154464270.00"
+            }
+          ]
+        }
+      ],
+      "awards": [
+        {
+          "lot_id": "83c65c4893a744bdb8c976d42a51b97d",
+          "status": "active",
+          "company_id": "35341905",
+          "amount_uah_vat_included": "144298287.00"
+        }
+      ],
+      "contracts": [
+        {
+          "id": "644dd506f7174e52b07593dcd0b0c2d6",
+          "contract_id": "UA-2025-03-17-004896-a-b1",
+          "status": "active",
+          "amount_uah_vat_included": "144298287.00"
+        }
+      ],
+      "defendant_document_hash_intersection": {
+        "company_ids": ["35341905", "45333199"],
+        "count": 0,
+        "hashes": []
+      }
+    }
+  ]
+}

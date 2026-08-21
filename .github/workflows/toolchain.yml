@@ -22,5 +22,5 @@ jobs:
           install: true
           cache: true
 
-      - name: Verify published toolchain
-        run: mise run toolchain:check
+      - name: Verify toolchain and public cases
+        run: mise run check

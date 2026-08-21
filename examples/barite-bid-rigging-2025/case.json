@@ -1,0 +1,27 @@
+{
+  "$schema": "../../schemas/case.schema.json",
+  "schema": "decision-archaeology.case@v0",
+  "template": "decision-archaeology.case-template@v0.1.0",
+  "id": "barite-bid-rigging-2025",
+  "title": "Barite tenders and AMCU decision 535-r",
+  "status": "active",
+  "visibility": "public",
+  "summary": "Which parts of AMCU decision 535-r can be reconstructed from the public procurement record, and which proposed shortcuts are refuted by that record?",
+  "paths": {
+    "sources": "sources/",
+    "observations": "observations/",
+    "claims": "claims/",
+    "decisions": "decisions/",
+    "checks": "checks/",
+    "receipts": "receipts/",
+    "artifacts": "artifacts/",
+    "exclusions": "exclusions.md"
+  },
+  "dependencies": [
+    {
+      "id": "python",
+      "version": "3.13.15",
+      "role": "standard-library offline and live case checks"
+    }
+  ]
+}

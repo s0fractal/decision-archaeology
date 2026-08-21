@@ -1,0 +1,15 @@
+{
+  "schema": "decision-archaeology.decision-event@v0-local",
+  "id": "decision.amcu.535-r",
+  "epistemic_status": "ATTRIBUTED_AUTHORITY_DECISION",
+  "authority": "Antimonopoly Committee of Ukraine",
+  "decision_number": "535-р",
+  "case_number": "145-26.13/35-26",
+  "decided_on": "2026-07-16",
+  "respondent_company_ids": ["35341905", "45333199"],
+  "tender_ids": ["UA-2025-02-03-015471-a", "UA-2025-03-17-004896-a"],
+  "published_disposition": "The authority found anti-competitive concerted actions that distorted the results of the two tenders.",
+  "published_total_fine_uah": "51899818.00",
+  "source_ids": ["source.amcu.final-news", "source.amcu.decision-register-nova"],
+  "reasoning_availability": "not-located-in-inventoried-public-sources"
+}

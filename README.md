@@ -48,7 +48,18 @@ exists or is stable.
 Public investigations will live under [`examples/`](examples/README.md). Every
 case starts from an immutable, versioned template and declares the exact
 protocol and executable-tool versions it uses. The initial template is
-deliberately small and still draft: the first real case will test and refine it.
+deliberately small and still draft.
+
+The first executable calibration dossier is
+[`barite-bid-rigging-2025`](examples/barite-bid-rigging-2025/README.md). It
+reconstructs the public boundary of an AMCU decision and deliberately retains
+refutations and missing reasoning instead of presenting the authority's finding
+as independently reproduced.
+
+Source-poor investigations remain under [`candidates/`](candidates/README.md)
+until they pass an explicit admission gate. The initial
+[`kherson-fortifications`](candidates/kherson-fortifications/README.md) audit is
+not a published allegation or completed dossier.
 
 See [`templates/case/v0.1.0/`](templates/case/v0.1.0/README.md) and the draft
 [`case.schema.json`](schemas/case.schema.json).
@@ -62,7 +73,7 @@ and their complete Python dependency graph.
 
 ```sh
 mise install
-mise run toolchain:check
+mise run check
 ```
 
 `mise` is a convenience and enforcement layer, not the only execution path.
@@ -71,9 +82,11 @@ without adopting a particular shell version manager.
 
 ## Status
 
-This repository is a public design scaffold. There is no stable API, executable
-pipeline, or adopted case format yet. Claims about implemented capabilities
-must link to runnable code and a reproducible check.
+This repository now has one executable case gate and one source-sufficiency
+candidate audit. There is still no stable API, sealed public-source escrow,
+adopted cross-protocol case profile, or general investigation pipeline. Claims
+about implemented capabilities must link to runnable code and a reproducible
+check.
 
 ## License
 
