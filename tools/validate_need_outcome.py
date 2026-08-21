@@ -22,7 +22,10 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from tools.history import deleted_since_first_commit, first_committed_bytes  # noqa: E402
+from tools.history import (  # noqa: E402
+    deleted_since_first_commit, first_committed_bytes, first_committed_revision,
+    is_ancestor,
+)
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -115,16 +118,18 @@ def validate_outcome(outcome_path: Path, verify_content: bool) -> None:
     outcome = load_object(outcome_path)
     required = {
         "$schema", "schema", "request_id", "status", "classification",
-        "target", "resolution", "replay", "rebuild", "recorded_at", "producer",
+        "target", "resolution", "replay", "recorded_at", "producer",
         "authority", "non_claims",
     }
+    if outcome.get("schema") == "decision-archaeology.need-outcome@v1":
+        required.add("rebuild")
     present = set(outcome) - {"supersedes"}
     require(present == required,
             f"outcome: keys differ: {sorted(map(repr, present ^ required))}")
     if "supersedes" in outcome:
         nonempty(outcome["supersedes"], "outcome.supersedes")
-    require(outcome["schema"] == "decision-archaeology.need-outcome@v1",
-            "outcome: wrong schema")
+    require(outcome.get("schema") in KNOWN_SCHEMAS,
+            f"outcome: unknown schema {outcome.get('schema')!r}")
     nonempty(outcome["$schema"], "outcome.$schema")
     require(REQUEST_ID.fullmatch(str(outcome["request_id"])) is not None,
             "outcome: bad request id")
@@ -167,6 +172,13 @@ def validate_outcome(outcome_path: Path, verify_content: bool) -> None:
         nonempty(replay[field], f"replay.{field}")
     artifact(replay["receipt"], "replay.receipt", pinned)
 
+    if "rebuild" not in outcome:            # a @v0 receipt predates the rebuild rule
+        datetime.fromisoformat(str(outcome["recorded_at"]).replace("Z", "+00:00"))
+        nonempty(outcome["producer"], "outcome.producer")
+        require(outcome["authority"] == "outcome-linkage-only", "outcome: bad authority")
+        require(isinstance(outcome["non_claims"], list) and outcome["non_claims"],
+                "outcome.non_claims: expected non-empty list")
+        return
     rebuild = outcome["rebuild"]
     require(isinstance(rebuild, dict), "rebuild: expected object")
     exact_keys(rebuild, {"revision", "path", "sha256", "command", "derived_from",
@@ -240,6 +252,10 @@ def outcomes_are_immutable(root: Path) -> dict[str, dict]:
             require(path.read_bytes() == committed,
                     f"{relative}: rewritten after it was committed; a correction is a "
                     "new receipt that supersedes this one, never an edit of it")
+        numbered = path.name.count(".") > 1
+        require(numbered == ("supersedes" in document),
+                f"{relative}: a numbered receipt supersedes exactly one earlier "
+                "receipt, and an unnumbered one supersedes nothing")
         records[relative] = document
 
     superseded = {}
@@ -255,9 +271,38 @@ def outcomes_are_immutable(root: Path) -> dict[str, dict]:
                 f"{superseded.get(earlier)!r}")
         require(records[earlier]["request_id"] == document["request_id"],
                 f"{relative}: supersedes a receipt for a different request")
+        landed, replaced = (first_committed_revision(root, relative),
+                            first_committed_revision(root, earlier))
+        if landed is not None:
+            require(replaced is not None,
+                    f"{relative}: is committed and supersedes {earlier!r}, which is "
+                    "not; a receipt cannot replace one that was never recorded")
+            require(is_ancestor(root, replaced, landed),
+                    f"{relative}: does not descend from {earlier!r}; a correction "
+                    "comes after what it corrects")
         superseded[earlier] = relative
-    return {relative: document for relative, document in records.items()
+
+    # A cycle would leave no live receipt at all, and every receipt in it would be
+    # skipped as "superseded by another" — a green run over nothing.
+    for start in records:
+        seen, node = [], start
+        while node is not None:
+            require(node not in seen,
+                    f"{' -> '.join(seen + [node])}: supersession cycle; each chain "
+                    "must end at the receipt that was filed first")
+            seen.append(node)
+            node = records[node].get("supersedes")
+
+    live = {relative: document for relative, document in records.items()
             if relative not in superseded}
+    heads = {}
+    for relative, document in live.items():
+        request = document["request_id"]
+        require(request not in heads,
+                f"{request}: two live receipts, {heads.get(request)!r} and "
+                f"{relative!r}; exactly one of a request's receipts is current")
+        heads[request] = relative
+    return live
 
 
 def main() -> int:
@@ -270,11 +315,9 @@ def main() -> int:
     live = outcomes_are_immutable(REPO_ROOT)
     for outcome_path in args.outcomes:
         relative = outcome_path.resolve().relative_to(REPO_ROOT).as_posix()
-        if relative not in live:
-            print(f"SUPERSEDED: {outcome_path} (kept byte for byte)")
-            continue
         validate_outcome(outcome_path, not args.no_artifact_content)
-        print(f"PASS: {outcome_path}")
+        state = "PASS" if relative in live else "PASS (superseded, kept byte for byte)"
+        print(f"{state}: {outcome_path}")
     return 0
 
 

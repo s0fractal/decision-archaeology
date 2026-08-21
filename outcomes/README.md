@@ -16,15 +16,17 @@ receipt must never do.
 the revision, path, and digest of a rebuild derived from one of the outcome's own
 published artifacts, together with the implementations it was forbidden to read.
 The validator rejects an outcome whose rebuild imports what it is supposed to
-verify independently. The single `@v0` record was migrated in place rather than
-kept as a second shape, and its rebuild is recorded at the revision where it ran.
+verify independently. An earlier receipt keeps the shape it was filed under and
+is validated against that version, never retrofitted to a later one.
 
 A committed receipt keeps its bytes. Proving that a pathname survives proves
 nothing about what now sits there, so every outcome is compared with the blob it
 carried when it first entered the repository. A correction is a **new** receipt,
 named `<REQUEST-ID>.<n>.json`, declaring `supersedes`; the earlier one stays
-exactly as it was and is validated only for immutability and identity, under the
-schema it declared at the time.
+exactly as it was, and is still fully validated under the schema it declared.
+Each chain ends at the receipt filed first, a correction must descend from what
+it corrects, and exactly one receipt per request is current — a chain that closed
+on itself would leave nothing live and nothing validated.
 
 `DA-SIGMA-0001.json` is such a record: the `@v0` receipt as originally filed. It
 was rewritten in place during the `@v1` migration, which is precisely the edit
