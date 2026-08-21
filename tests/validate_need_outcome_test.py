@@ -127,6 +127,32 @@ def main() -> int:
         rejected(lambda: outcomes_are_immutable(misnamed),
                  "a receipt whose filename does not match its request id")
 
+        cycle = repository(temporary_path / "cycle")
+        looping = {"schema": "decision-archaeology.need-outcome@v1",
+                   "request_id": "DA-X-0001"}
+        commit(cycle, {cycle / "outcomes" / "DA-X-0001.2.json":
+                       {**looping, "supersedes": "outcomes/DA-X-0001.3.json"},
+                       cycle / "outcomes" / "DA-X-0001.3.json":
+                       {**looping, "supersedes": "outcomes/DA-X-0001.2.json"}},
+               "two receipts superseding each other")
+        rejected(lambda: outcomes_are_immutable(cycle),
+                 "a supersession cycle, which would leave no receipt validated at all")
+
+        unnumbered = repository(temporary_path / "unnumbered")
+        commit(unnumbered, {unnumbered / "outcomes" / "DA-X-0001.2.json": dict(looping)},
+               "a numbered receipt that supersedes nothing")
+        rejected(lambda: outcomes_are_immutable(unnumbered),
+                 "a numbered receipt that supersedes nothing")
+
+        backwards = repository(temporary_path / "backwards")
+        later = backwards / "outcomes" / "DA-X-0001.2.json"
+        commit(backwards, {later: {**looping, "supersedes": "outcomes/DA-X-0001.json"}},
+               "the correction lands first")
+        commit(backwards, {backwards / "outcomes" / "DA-X-0001.json": dict(looping)},
+               "and what it corrects lands after it")
+        rejected(lambda: outcomes_are_immutable(backwards),
+                 "a receipt superseding one recorded after it")
+
         orphan = repository(temporary_path / "orphan")
         claiming = json.loads(json.dumps(original))
         claiming["supersedes"] = "outcomes/DA-SIGMA-0001.9.json"
@@ -134,7 +160,7 @@ def main() -> int:
         rejected(lambda: outcomes_are_immutable(orphan),
                  "a receipt superseding one that was never recorded")
 
-    print("NEED-OUTCOME-BOUNDARY: ALL PASS (12/12)")
+    print("NEED-OUTCOME-BOUNDARY: ALL PASS (15/15)")
     return 0
 
 

@@ -186,6 +186,19 @@ def deleted_since_first_commit(root: Path, prefix: str, suffix: str = ".json") -
     return sorted(gone)
 
 
+def first_committed_revision(root: Path, relative: str) -> str | None:
+    """The revision in which this path entered the repository."""
+    listed = _git(root, "log", "--diff-filter=A", "--format=%H", "--", relative)
+    if listed.returncode != 0:
+        return None
+    revisions = listed.stdout.decode().split()
+    return revisions[-1] if revisions else None
+
+
+def is_ancestor(root: Path, earlier: str, later: str) -> bool:
+    return _git(root, "merge-base", "--is-ancestor", earlier, later).returncode == 0
+
+
 def first_committed_bytes(root: Path, relative: str) -> bytes | None:
     """The bytes this path carried when it first entered the repository."""
     listed = _git(root, "log", "--diff-filter=A", "--format=%H", "--", relative)
