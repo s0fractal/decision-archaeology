@@ -57,23 +57,15 @@ identity error.
 
 ## Admission gate
 
-This candidate moves to `examples/` only after all mandatory items below pass:
+The gate is a record, not a checklist in prose: see
+[`admission.json`](admission.json) and its rendering in
+[`admission.md`](admission.md). A requirement counts as met only when it names
+evidence that resolves, an unmet one must say what is missing, and every
+material the inventory records as missing has to keep a requirement open.
+`mise run candidates:check` decides the verdict and refuses to let this
+directory appear under `examples/` while blocking requirements are unmet.
 
-- [ ] exact contracting authority, contract identifiers, dates, scope, and
-  payment records for the reported `280 million UAH`;
-- [ ] attributable copies or lawful extracts of the invoices and delivery
-  records behind the manufacturer → intermediary → contractor comparison;
-- [ ] product equivalence normalized for specification, quantity, date, VAT,
-  logistics, storage, financing, and risk;
-- [ ] time-bound company-registry evidence for every claimed relationship;
-- [ ] an explicit distinction between observed resale markup, public loss,
-  artificial overpayment, and criminal hypothesis;
-- [x] a material counterposition retained as a first-class source;
-- [ ] a primary or attributable official record of the criminal proceeding and
-  its current procedural status;
-- [ ] a publication review that excludes operationally sensitive fortification
-  detail and unnecessary personal data;
-- [ ] at least one deterministic check over retained, publishable inputs.
+Current verdict: **NOT ADMITTED** — 1 of 9 requirements met.
 
 See [`source-inventory.json`](source-inventory.json) and
 [`search-log.md`](search-log.md).

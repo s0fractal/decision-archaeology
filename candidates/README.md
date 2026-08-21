@@ -15,5 +15,7 @@ Admission requires:
 5. a lawful acquisition and publication plan;
 6. at least one useful deterministic check over retained inputs.
 
+Admission is decided from `admission.json` by `mise run candidates:check`, which refuses a requirement ticked without resolving evidence and refuses publication under `examples/` while any blocking requirement is unmet.
+
 Failure to pass the gate is a result. It prevents source scarcity from being
 converted into false certainty by a polished graph.
