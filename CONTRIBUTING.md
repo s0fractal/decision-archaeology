@@ -6,8 +6,8 @@ to broad speculative frameworks.
 
 ## Case contributions
 
-Start from `examples/_template/` and keep the standard paths intact. A public
-case must:
+Start from the newest applicable version under `templates/case/`, copy it to
+`examples/<case-id>/`, and preserve its template identity. A public case must:
 
 - identify every source and its acquisition context;
 - distinguish observations, claims, and decisions;

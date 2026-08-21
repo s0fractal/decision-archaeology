@@ -1,6 +1,9 @@
 # Case title
 
-Replace this file with a short, neutral entry point to the investigation.
+Template identity: `decision-archaeology.case-template@v0.1.0`
+
+Replace this file with a short, neutral entry point to the investigation, but
+preserve the template identity in `case.json`.
 
 ## Question
 

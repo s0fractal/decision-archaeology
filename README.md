@@ -46,12 +46,28 @@ exists or is stable.
 ## Cases
 
 Public investigations will live under [`examples/`](examples/README.md). Every
-case starts from the same versioned directory contract and declares the exact
-protocol versions it uses. The initial template is deliberately small and still
-draft: the first real case will test and refine it.
+case starts from an immutable, versioned template and declares the exact
+protocol and executable-tool versions it uses. The initial template is
+deliberately small and still draft: the first real case will test and refine it.
 
-See [`examples/_template/`](examples/_template/README.md) and the draft
+See [`templates/case/v0.1.0/`](templates/case/v0.1.0/README.md) and the draft
 [`case.schema.json`](schemas/case.schema.json).
+
+## Reproducible toolchain
+
+Cases must not depend on sibling checkouts of protocol repositories. The root
+[`mise.toml`](mise.toml) pins the runtime and package manager; the committed
+[`toolchain/uv.lock`](toolchain/uv.lock) pins the published verification tools
+and their complete Python dependency graph.
+
+```sh
+mise install
+mise run toolchain:check
+```
+
+`mise` is a convenience and enforcement layer, not the only execution path.
+The equivalent `uv` commands remain documented so the dossier can be reproduced
+without adopting a particular shell version manager.
 
 ## Status
 

@@ -7,6 +7,7 @@
   "additionalProperties": false,
   "required": [
     "schema",
+    "template",
     "id",
     "title",
     "status",
@@ -21,6 +22,10 @@
     },
     "schema": {
       "const": "decision-archaeology.case@v0"
+    },
+    "template": {
+      "type": "string",
+      "pattern": "^decision-archaeology\\.case-template@v0\\.[0-9]+\\.[0-9]+(?:-[0-9A-Za-z.-]+)?$"
     },
     "id": {
       "type": "string",

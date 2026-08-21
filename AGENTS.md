@@ -18,6 +18,11 @@ Keep facts, hypotheses, and speculation distinguishable. Generated artifacts
 must retain links to their inputs and transformations. Do not describe a draft,
 experiment, or proposed bridge as adopted or implemented.
 
-Case data belongs under `examples/<case-id>/` and must follow the versioned case
-structure. Never commit private source material, secrets, personal data without
-a lawful publication basis, or unverifiable allegations.
+Case data belongs under `examples/<case-id>/` and must record the exact template
+identity from `templates/case/`. Never edit a published template version in
+place; add a new version. Never commit private source material, secrets,
+personal data without a lawful publication basis, or unverifiable allegations.
+
+Do not rely on sibling repository checkouts. Published tools belong in the
+locked toolchain; unreleased integrations must use an immutable source identity
+and disclose that they are development inputs.

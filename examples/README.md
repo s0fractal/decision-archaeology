@@ -1,8 +1,9 @@
 # Public cases
 
 Each directory under `examples/` is a self-contained, publishable investigation
-case. Copy `_template/` to begin a case; do not edit the template to contain a
-specific investigation.
+case. Copy an exact version from `templates/case/` to begin a case. Never infer
+the template version from the current repository state: it is recorded in the
+case manifest.
 
 ## Required layout
 
@@ -36,4 +37,6 @@ from generated output:
 `artifacts/` is never the sole source of a substantive claim: generated output
 must point back to the records and transformations that produced it.
 
-The format is currently `decision-archaeology.case@v0` and is a draft.
+The format is currently `decision-archaeology.case@v0` and is a draft. The
+schema version describes data compatibility; the template version records the
+exact scaffold used to start the case. They are deliberately separate.
