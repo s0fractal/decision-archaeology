@@ -1,0 +1,35 @@
+{
+  "schema": "decision-archaeology.warrant-ski-reason@v0",
+  "adapter": "decision-archaeology.warrant-ski-reason@v0",
+  "case_id": "barite-bid-rigging-2025",
+  "source_receipt": "receipts/sigma-money-add-eq-v0.json",
+  "profile": "decision-archaeology.sigma-money-add-eq@v0",
+  "warrant": {
+    "package": "warrant-verify",
+    "version": "0.9.0",
+    "runtime": "ski@v1",
+    "body_version": "0.2"
+  },
+  "check": {
+    "atp": 1000000,
+    "expect": "bed95fbc7ccd2cf53d3562138a69a90a9c38de9f7a23d9015eef1b6638d4eb1d",
+    "ski": 1,
+    "term": "293c4942f543d7224e34eb3ff9353588d5da67e34048d4decf3826e431415c57"
+  },
+  "check_blob_sha256": "c608f48b39f79cc35a844ed5f9eac7231399a2310002c93a7c23988fa4b157d6",
+  "execution": {
+    "verdict": "pass",
+    "result_hash": "bed95fbc7ccd2cf53d3562138a69a90a9c38de9f7a23d9015eef1b6638d4eb1d",
+    "atp_spent": 203530
+  },
+  "filing": {
+    "record_verified": true,
+    "warnings": 1,
+    "note": "Filed under an ephemeral key to prove the path; a published record needs a real actor key, which is an identity decision and not a repository artifact."
+  },
+  "authority": "deterministic-execution-only",
+  "non_claims": [
+    "Re-execution attests the arithmetic predicate only; it says nothing about coordination, intent, guilt, or the AMCU finding.",
+    "Warrant carries this reason under its existing ski@v1 runtime; no change to Warrant is claimed, requested, or adopted here."
+  ]
+}
