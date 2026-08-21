@@ -23,7 +23,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from tools.history import committed_versions  # noqa: E402
+from tools.history import committed_versions, unexplained_vanished  # noqa: E402
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 SCHEMA = "decision-archaeology.exclusions@v0"
@@ -139,6 +139,11 @@ def validate(record_path: Path, prose_path: Path, history: list[dict] | None = N
                     f"{entry['id']}: was retired in an earlier revision and has since "
                     "been dropped from the record")
 
+    vanished = unexplained_vanished(REPO_ROOT, "examples/*/exclusions.json")
+    require(not vanished,
+            f"{vanished}: exclusion records were committed at these paths and are "
+            "gone; a record that moves declares `moved_from`")
+
     rendered = render(record)
     if write:
         prose_path.write_text(rendered)
@@ -161,7 +166,10 @@ def main() -> int:
     arguments = parser.parse_args()
     record_path = arguments.case / "exclusions.json"
     prose_path = arguments.case / "exclusions.md"
-    validate(record_path, prose_path, committed_versions(record_path), arguments.write)
+    record = json.loads(record_path.read_text())
+    history = committed_versions(record_path, lambda value: value.get("case_id"),
+                                 record.get("moved_from") or [])
+    validate(record_path, prose_path, history, arguments.write)
     return 0
 
 
