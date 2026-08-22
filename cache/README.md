@@ -114,8 +114,17 @@ reproduce: four mainstream parsers read the same duplicate member identically.
 The entry is `records-only` and its witness is inverted, so it passes while the
 parsers agree and fails the day one of them stops agreeing.
 
+`CC-0012` is the second, and it is a `BOUNDARY` rather than a defect: an in-toto
+`MATCH` rule pointing at a step that does not exist verifies happily, because
+`MATCH` consumes artifacts and does not assert existence. The protection comes
+from closing the rule set with a terminal `DISALLOW *`, which the witness shows
+by refusing the same layout once that rule is added. A typo in a step name is
+therefore silent unless the policy is closed — worth knowing before writing one,
+and not a flaw to report.
+
 Nothing was reported to anyone. No vulnerability was demonstrated, and an entry
-here is not a disclosure.
+here is not a disclosure. Two probes outward so far: one null result and one
+design boundary.
 
 ## Where the first entries came from
 

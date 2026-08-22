@@ -1,0 +1,56 @@
+{
+  "$schema": "../../schemas/constraint.schema.json",
+  "schema": "decision-archaeology.constraint@v0",
+  "id": "CC-0012",
+  "type": "BOUNDARY",
+  "claim": "An in-toto MATCH rule in a signed layout constrains the step it names, so a rule whose destination step does not exist still checks something.",
+  "tags": [
+    "in-toto",
+    "policy",
+    "vacuous-check",
+    "outward-probe"
+  ],
+  "environment": {
+    "what": "in-toto artifact rules as implemented in the python package",
+    "versions": [
+      "in-toto 3.1.0",
+      "securesystemslib 1.4.0"
+    ],
+    "assumptions": [
+      "measured 2026-08-23",
+      "layout with a single step and one link"
+    ]
+  },
+  "witness": {
+    "counterexample": {
+      "argv": [
+        "cache/witnesses/intoto-venv/bin/python",
+        "cache/witnesses/cc_0012_intoto_match_scope.py",
+        "counterexample"
+      ],
+      "expected_exit": 0,
+      "requires": [
+        "cache/witnesses/intoto-venv/bin/python"
+      ],
+      "means": "a layout whose only rule points at a step that does not exist verifies successfully — the rule consumes nothing and forbids nothing"
+    },
+    "negative_control": {
+      "argv": [
+        "cache/witnesses/intoto-venv/bin/python",
+        "cache/witnesses/cc_0012_intoto_match_scope.py",
+        "control"
+      ],
+      "expected_exit": 0,
+      "requires": [
+        "cache/witnesses/intoto-venv/bin/python"
+      ],
+      "means": "the same layout with a terminal DISALLOW * is refused, so the protection comes from closing the rule set, not from the MATCH"
+    }
+  },
+  "applies_until": "in-toto reports a rule whose destination step is absent from the layout, or the rule language stops treating consumption and existence as separate questions.",
+  "cost": {
+    "to_discover": "an afternoon, most of it spent building a layout that verifies at all",
+    "to_recheck": "seconds, in a venv holding in-toto 3.1.0"
+  },
+  "authority": "informs-only"
+}
