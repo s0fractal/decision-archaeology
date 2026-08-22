@@ -1,0 +1,53 @@
+{
+  "$schema": "../../schemas/constraint.schema.json",
+  "schema": "decision-archaeology.constraint@v0",
+  "id": "CC-0011",
+  "type": "INCONCLUSIVE",
+  "claim": "A leniently parsed signed payload splits honest consumers: two mainstream readers of the same signed bytes obtain different documents.",
+  "tags": [
+    "json",
+    "dsse",
+    "in-toto",
+    "signed-boundary",
+    "outward-probe"
+  ],
+  "environment": {
+    "what": "python in-toto 3.1.0 over securesystemslib 1.4.0, plus whatever JSON parsers the host has",
+    "versions": [
+      "in-toto 3.1.0",
+      "securesystemslib 1.4.0",
+      "python 3.13",
+      "jq, node, ruby as installed"
+    ],
+    "assumptions": [
+      "measured 2026-08-23 on one host",
+      "the signer is the adversary: an attacker cannot add a duplicate member without re-signing"
+    ]
+  },
+  "witness": {
+    "counterexample": {
+      "argv": [
+        "python3",
+        "cache/witnesses/cc_0011_signed_json_leniency.py",
+        "counterexample"
+      ],
+      "expected_exit": 1,
+      "means": "the split does NOT reproduce: every available parser reads the duplicate member last-wins. If this ever exits 0, a parser has started disagreeing and this entry must be re-litigated"
+    },
+    "negative_control": {
+      "argv": [
+        "python3",
+        "cache/witnesses/cc_0011_signed_json_leniency.py",
+        "control"
+      ],
+      "expected_exit": 0,
+      "means": "a strict I-JSON reader refuses the same bytes, so the leniency is a choice rather than a necessity"
+    }
+  },
+  "applies_until": "A consumer parser that takes first-wins or refuses duplicates is shown in a real deployment, or the library adopts a strict reader at the signed boundary.",
+  "cost": {
+    "to_discover": "one afternoon: install, three probes, and a five-parser measurement",
+    "to_recheck": "seconds — the witness measures the parsers present"
+  },
+  "authority": "records-only"
+}

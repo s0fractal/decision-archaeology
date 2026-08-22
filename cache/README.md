@@ -104,6 +104,19 @@ re-litigated is not more trustworthy for being old.
 | entries accumulate faster than witnesses are re-run | it has become a collection, not a cache |
 | it does show net benefit on independently drawn tasks | only then extract it from this repository |
 
+## Turning it outward
+
+The obvious objection to an archive of one project's own walls is selection bias:
+it is knowledge about us, found while building us. `CC-0011` is the first entry
+that went looking elsewhere — and it is a null result, which is the point. The
+claim that a leniently parsed signed payload splits honest consumers did not
+reproduce: four mainstream parsers read the same duplicate member identically.
+The entry is `records-only` and its witness is inverted, so it passes while the
+parsers agree and fails the day one of them stops agreeing.
+
+Nothing was reported to anyone. No vulnerability was demonstrated, and an entry
+here is not a disclosure.
+
 ## Where the first entries came from
 
 Not from brainstorming. Every one is a wall this project actually walked into
