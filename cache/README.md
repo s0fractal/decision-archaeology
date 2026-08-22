@@ -20,7 +20,7 @@ strength of the claim:
 
 | type | may | needs |
 | --- | --- | --- |
-| `REFUTATION` | block a path without new evidence | runnable witness **and** a negative control |
+| `REFUTATION` | block a path without new evidence | two **executable** halves: counterexample and negative control |
 | `BOUNDARY` | redirect; never block | witness (usually the design saying no in its own words) |
 | `COST_WITNESS` | inform a choice | a measurement with its method |
 | `FAILED_ATTEMPT` | record that one way failed | witness; says nothing about other ways |
@@ -28,10 +28,34 @@ strength of the claim:
 | `UNRUNNABLE` | admit the test could not run here | nothing |
 | `SUPERSEDED` | point at what replaced it | a successor |
 
-A refutation without a negative control is refused: a check that cannot fail is
-not evidence that something is impossible. Every entry must say what would end
-its reach (`applies_until`) and what re-checking costs — a cache is only worth
-consulting when re-checking is cheaper than re-discovering.
+A witness is an `argv` that runs, not a sentence about a test that might. Prose
+passes any reader and `command: true` passes any runner, which is why the first
+version of this cache had no evidence in it at all. A blocking entry therefore
+carries **two** executable halves — the counterexample shows the claim failing,
+the negative control shows the same harness still able to report success — and
+both are re-run by the gate. An entry whose witness cannot run here may not
+block; it is reported as unrunnable rather than silently skipped.
+
+Every entry must say what would end its reach (`applies_until`) and what
+re-checking costs — a cache is only worth consulting when re-checking is cheaper
+than re-discovering.
+
+## What is settled, and what may improve
+
+An entry is a record about the past, so `id`, `type`, `claim` and `environment`
+are settled: a different claim is a new entry that supersedes this one, and an
+entry that was committed cannot be deleted.
+
+Its **evidence** is deliberately not settled. A better reproducer for the same
+claim is the point of the exercise, and freezing the first witness would freeze
+the weakest one. What cannot move freely is **authority**: it may be given up at
+any time and regained only against a recorded relitigation, so an entry cannot
+quietly promote itself back to blocking a path.
+
+Consulting runs the evidence: `lookup` validates the whole cache first and
+re-executes the witness of any matched blocking entry, because an entry read out
+of an unchecked working tree is exactly the kind of sentence this cache exists to
+distrust.
 
 ```sh
 mise run cache:check                                  # entries and blocking witnesses

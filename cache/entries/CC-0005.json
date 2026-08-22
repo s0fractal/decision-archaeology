@@ -17,14 +17,19 @@
     "assumptions": []
   },
   "witness": {
-    "command": "python3 tests/validate_exclusions_test.py",
-    "expect": "'a published absence whose boundary was quietly weakened' is rejected",
-    "negative_control": "unchanged entries validate; live fields may still change"
+    "counterexample": {
+      "argv": [
+        "python3",
+        "tests/validate_exclusions_test.py"
+      ],
+      "expected_exit": 0,
+      "means": "the suite builds the counterexample scenario and shows the sound check rejecting it; it is not a separated pair, so this entry may not block"
+    }
   },
   "applies_until": "Each record separates settled fields from live state and pins the settled ones across history.",
   "cost": {
     "to_discover": "found by looking for twins of CC-0002 rather than by review",
     "to_recheck": "seconds"
   },
-  "authority": "blocks-without-new-evidence"
+  "authority": "informs-only"
 }

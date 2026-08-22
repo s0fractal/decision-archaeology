@@ -18,11 +18,6 @@
       "read-only query; nothing was submitted for capture"
     ]
   },
-  "witness": {
-    "command": "mise run pins:refresh",
-    "expect": "0 of 2 load-bearing revisions are independently witnessed",
-    "negative_control": "the same mechanism did find a capture for an AMCU news page, so a negative result is not a broken query"
-  },
   "applies_until": "Someone captures the commit pages, or a different kind of witness is adopted. This says nothing about whether such a witness is a good idea.",
   "cost": {
     "to_discover": "two API calls",

@@ -20,9 +20,24 @@
     ]
   },
   "witness": {
-    "command": "python3 tests/validate_exclusions_test.py",
-    "expect": "'an exclusion deleted in a later commit' is rejected — the case builds a real repository and commits the deletion before asserting",
-    "negative_control": "the same suite accepts the unmodified record, so the check is not rejecting everything"
+    "counterexample": {
+      "argv": [
+        "python3",
+        "cache/witnesses/cc_0001_head_guard.py",
+        "counterexample"
+      ],
+      "expected_exit": 0,
+      "means": "a HEAD comparison, run after the deletion was committed, does not notice it"
+    },
+    "negative_control": {
+      "argv": [
+        "python3",
+        "cache/witnesses/cc_0001_head_guard.py",
+        "control"
+      ],
+      "expected_exit": 0,
+      "means": "the same scenario read across the whole history is noticed, so the harness can report a difference"
+    }
   },
   "applies_until": "The guard reads revisions other than HEAD, or the record is verified against an anchor outside the repository.",
   "cost": {
