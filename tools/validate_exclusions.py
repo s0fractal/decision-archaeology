@@ -23,7 +23,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from tools.history import committed_versions, unexplained_vanished  # noqa: E402
+from tools.history import committed_versions, rewritten_facts, unexplained_vanished  # noqa: E402
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 SCHEMA = "decision-archaeology.exclusions@v0"
@@ -138,6 +138,17 @@ def validate(record_path: Path, prose_path: Path, history: list[dict] | None = N
             require(entry["id"] in retired or entry["id"] in seen,
                     f"{entry['id']}: was retired in an earlier revision and has since "
                     "been dropped from the record")
+
+    rewritten = rewritten_facts(history or [], "exclusions", "id",
+                                ("kind", "subject", "statement", "search_boundary",
+                                 "restriction_basis", "reported_by",
+                                 "minimization_basis", "method", "not_examined",
+                                 "would_resolve"),
+                                record["exclusions"], set(retired))
+    require(not rewritten,
+            f"{rewritten}: recorded with different substance in an earlier revision. "
+            "An absence is settled once published: a different absence is a new entry, "
+            "and the old one is retired")
 
     vanished = unexplained_vanished(REPO_ROOT, "examples/*/exclusions.json")
     require(not vanished,

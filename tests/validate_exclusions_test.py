@@ -78,6 +78,12 @@ def main() -> int:
         rejected(lambda: validate(*scaffold(root / "barite-bid-rigging-2025", foreign)),
                  "a record naming a case it does not live in")
 
+        weakened = copy.deepcopy(record)
+        weakened["exclusions"][0]["search_boundary"] = "we looked around a bit"
+        rejected(lambda: validate(*scaffold(root / "barite-bid-rigging-2025", weakened),
+                                  history=[record]),
+                 "a published absence whose boundary was quietly weakened")
+
         # the guard must still hold once the change is committed, which is when a
         # HEAD comparison silently starts comparing the record with itself
         committed = repository(root / "committed")
@@ -105,7 +111,7 @@ def main() -> int:
         rejected(lambda: validate(*scaffold(root / "retired", retired)),
                  "an exclusion both live and retired")
 
-    print("EXCLUSIONS-BOUNDARY: ALL PASS (9/9)")
+    print("EXCLUSIONS-BOUNDARY: ALL PASS (10/10)")
     return 0
 
 

@@ -58,6 +58,14 @@ def main() -> int:
                                   history=[state]),
                  "a recorded witness dropped without a stated reason")
 
+        forged = copy.deepcopy(state)
+        for entry in forged["sources"]:
+            if entry["witness"] is not None:
+                entry["witness"]["decoded_sha256"] = "0" * 64
+        rejected(lambda: validate(written(directory, "forged.json", forged), INDEX,
+                                  history=[state]),
+                 "a recorded observation whose digest was rewritten")
+
         # and the same, after the deletion has been committed
         committed = repository(directory / "committed")
         sources = committed / "sources"
@@ -90,7 +98,7 @@ def main() -> int:
         rejected(lambda: validate(written(directory, "quiet.json", quiet), INDEX),
                  "state published without its interpretation boundaries")
 
-    print("ACQUISITION-STATE-BOUNDARY: ALL PASS (6/6)")
+    print("ACQUISITION-STATE-BOUNDARY: ALL PASS (7/7)")
     return 0
 
 

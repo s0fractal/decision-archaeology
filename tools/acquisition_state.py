@@ -218,6 +218,23 @@ def validate(state_path: Path, index_path: Path, history: list[dict] | None = No
                         f"{before['witness']['snapshot_timestamp']} disappeared without "
                         "a stated reason; absence must be declared, not produced")
 
+    for version in history or []:
+        for before in version.get("sources", []):
+            witness_before = before.get("witness")
+            entry = current.get(before["id"])
+            if witness_before is None or entry is None:
+                continue
+            witness_now = entry.get("witness")
+            if witness_now is None:
+                continue                       # handled by the withdrawal rule below
+            for field in ("snapshot_timestamp", "raw_sha256", "decoded_sha256",
+                          "raw_bytes", "decoded_bytes", "provider"):
+                require(witness_before.get(field) == witness_now.get(field),
+                        f"{before['id']}: the witness recorded at "
+                        f"{witness_before['snapshot_timestamp']} now reports a different "
+                        f"{field}. An observation is settled: a different capture is a "
+                        "new witness, recorded after the old one is withdrawn")
+
     vanished = unexplained_vanished(REPO_ROOT, "examples/*/sources/acquisition-state.json")
     require(not vanished,
             f"{vanished}: acquisition records were committed at these paths and are "
