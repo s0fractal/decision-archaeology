@@ -1,0 +1,32 @@
+{
+  "$schema": "../../schemas/constraint.schema.json",
+  "schema": "decision-archaeology.constraint@v0",
+  "id": "CC-0003",
+  "type": "REFUTATION",
+  "claim": "`git log --follow` is enough to read a record's history across a rename.",
+  "tags": [
+    "git",
+    "rename-detection",
+    "history"
+  ],
+  "environment": {
+    "what": "history readers that resolve each revision at the file's current path",
+    "versions": [
+      "git 2.x"
+    ],
+    "assumptions": [
+      "the move and an edit land in the same commit"
+    ]
+  },
+  "witness": {
+    "command": "python3 tests/admission_gate_test.py",
+    "expect": "'a record moved without declaring where it came from' and 'a requirement dropped during a declared move' are both rejected",
+    "negative_control": "an unmoved record with full history still validates"
+  },
+  "applies_until": "Each revision is read at the name the file carried then, and a moved record declares `moved_from`. Note rename detection is a similarity heuristic: a move that edits enough of the file reports as add+delete, not as a rename.",
+  "cost": {
+    "to_discover": "one adversarial review round",
+    "to_recheck": "seconds"
+  },
+  "authority": "blocks-without-new-evidence"
+}

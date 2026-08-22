@@ -1,0 +1,30 @@
+{
+  "$schema": "../../schemas/constraint.schema.json",
+  "schema": "decision-archaeology.constraint@v0",
+  "id": "CC-0005",
+  "type": "REFUTATION",
+  "claim": "Guarding an entry's identifier guards the fact recorded under it.",
+  "tags": [
+    "provenance",
+    "records",
+    "settled-fields"
+  ],
+  "environment": {
+    "what": "records with per-entry identifiers and monotonicity guards",
+    "versions": [
+      "decision-archaeology at dd7935d"
+    ],
+    "assumptions": []
+  },
+  "witness": {
+    "command": "python3 tests/validate_exclusions_test.py",
+    "expect": "'a published absence whose boundary was quietly weakened' is rejected",
+    "negative_control": "unchanged entries validate; live fields may still change"
+  },
+  "applies_until": "Each record separates settled fields from live state and pins the settled ones across history.",
+  "cost": {
+    "to_discover": "found by looking for twins of CC-0002 rather than by review",
+    "to_recheck": "seconds"
+  },
+  "authority": "blocks-without-new-evidence"
+}

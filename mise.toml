@@ -85,6 +85,14 @@ description = "Carry the case's Sigma check into Warrant as a ski@v1 reason and 
 depends = ["toolchain:sync"]
 run = 'uv run --project toolchain --frozen python adapters/warrant_ski_reason_v0.py'
 
+[tasks."cache:check"]
+description = "Validate the constraint cache and re-run the witnesses of entries that may block a path"
+run = '''
+python3 tools/constraints.py verify
+python3 tests/constraints_test.py
+python3 tools/constraints.py witnesses
+'''
+
 [tasks."pins:check"]
 description = "Report how much of this repository's own past is retained by anybody else"
 run = '''
@@ -105,4 +113,4 @@ python tests/validate_need_outcome_test.py
 
 [tasks.check]
 description = "Run the repository offline reproducibility gate"
-depends = ["toolchain:check", "case:barite", "case:barite:exclusions", "case:barite:acquisition", "candidates:check", "needs:check", "pins:check", "profile:sigma-money-add-eq", "profiles:check", "adapters:warrant", "outcomes:check"]
+depends = ["toolchain:check", "case:barite", "case:barite:exclusions", "case:barite:acquisition", "candidates:check", "needs:check", "pins:check", "cache:check", "profile:sigma-money-add-eq", "profiles:check", "adapters:warrant", "outcomes:check"]

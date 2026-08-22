@@ -1,0 +1,32 @@
+{
+  "$schema": "../../schemas/constraint.schema.json",
+  "schema": "decision-archaeology.constraint@v0",
+  "id": "CC-0006",
+  "type": "BOUNDARY",
+  "claim": "OAIP can serve as the provenance layer for acquiring an external public record.",
+  "tags": [
+    "oaip",
+    "acquisition",
+    "routing"
+  ],
+  "environment": {
+    "what": "OAIP SPEC as published",
+    "versions": [
+      "oaip 0.3.0, SPEC v0.1"
+    ],
+    "assumptions": [
+      "acquisition means fetching bytes from a publisher"
+    ]
+  },
+  "witness": {
+    "command": "grep -n 'opens no sockets and fetches nothing' ../oaip/SPEC.md",
+    "expect": "the threat table states the design boundary in the protocol's own words",
+    "negative_control": "the same file does describe workspace observation, so the grep is not failing for absence of content"
+  },
+  "applies_until": "OAIP defines an acquisition record type, or a profile binds fetched bytes to an authority and time by observation rather than narration.",
+  "cost": {
+    "to_discover": "reading one SPEC section after a wrong routing assumption had already been written down",
+    "to_recheck": "one grep"
+  },
+  "authority": "informs-only"
+}

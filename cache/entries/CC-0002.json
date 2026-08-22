@@ -1,0 +1,32 @@
+{
+  "$schema": "../../schemas/constraint.schema.json",
+  "schema": "decision-archaeology.constraint@v0",
+  "id": "CC-0002",
+  "type": "REFUTATION",
+  "claim": "Proving that a recorded pathname still exists proves the record at that path is intact.",
+  "tags": [
+    "provenance",
+    "immutability",
+    "receipts"
+  ],
+  "environment": {
+    "what": "append-only receipt stores kept in git",
+    "versions": [
+      "git 2.x"
+    ],
+    "assumptions": [
+      "the guard checks existence only"
+    ]
+  },
+  "witness": {
+    "command": "python3 tests/validate_need_outcome_test.py",
+    "expect": "'a committed receipt rewritten under the same name' is rejected",
+    "negative_control": "the committed receipts themselves validate, so the rule does not reject all content"
+  },
+  "applies_until": "Content is compared against the bytes first committed at that path, or an external anchor holds the digest.",
+  "cost": {
+    "to_discover": "one adversarial review round",
+    "to_recheck": "seconds"
+  },
+  "authority": "blocks-without-new-evidence"
+}

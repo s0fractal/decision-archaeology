@@ -1,0 +1,30 @@
+{
+  "$schema": "../../schemas/constraint.schema.json",
+  "schema": "decision-archaeology.constraint@v0",
+  "id": "CC-0007",
+  "type": "BOUNDARY",
+  "claim": "SEV's loss manifest can express evidentiary absence in the world (missing, restricted, reported-only).",
+  "tags": [
+    "sev",
+    "absence",
+    "routing"
+  ],
+  "environment": {
+    "what": "SEV profile PROV-EVIDENCE-VIEW as published",
+    "versions": [
+      "sev, research status, 2026-08"
+    ],
+    "assumptions": []
+  },
+  "witness": {
+    "command": "grep -c 'L-' ../sev/profiles/PROV-EVIDENCE-VIEW.md",
+    "expect": "every code qualifies what a projection cannot express about a sealed snapshot; none describes material never acquired",
+    "negative_control": "the file does define absence codes (L-NO*), so the distinction is about scope, not about missing documentation"
+  },
+  "applies_until": "SEV adds world-absence semantics, or an application publishes its own absence vocabulary (this repository did).",
+  "cost": {
+    "to_discover": "reading one section",
+    "to_recheck": "one grep"
+  },
+  "authority": "informs-only"
+}
