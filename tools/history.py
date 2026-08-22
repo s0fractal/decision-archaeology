@@ -209,3 +209,30 @@ def first_committed_bytes(root: Path, relative: str) -> bytes | None:
         return None
     blob = _git(root, "cat-file", "blob", f"{revisions[-1]}:{relative}")
     return blob.stdout if blob.returncode == 0 else None
+
+
+def rewritten_facts(history: list[dict], collection: str, identity: str,
+                    fields: tuple[str, ...], current: list[dict],
+                    excused: set[str] | None = None) -> list[str]:
+    """Identifiers whose settled fields differ from any committed revision.
+
+    A record can carry both settled facts and live state: what an absence *is*
+    does not change, while what a candidate has *achieved* does. Guarding only
+    the identifier lets the fact behind it be rewritten while the guard reports
+    that nothing disappeared — the same shape of defect as proving a pathname
+    survived without proving the receipt did. So the settled fields never change:
+    a different fact is a new entry, and the old one is retired.
+    """
+    excused = excused or set()
+    live = {item[identity]: item for item in current}
+    offending = []
+    for version in history:
+        for item in version.get(collection, []) or []:
+            key = item.get(identity)
+            if key is None or key in excused or key not in live:
+                continue
+            before = {field: item.get(field) for field in fields}
+            after = {field: live[key].get(field) for field in fields}
+            if before != after and key not in offending:
+                offending.append(key)
+    return sorted(offending)

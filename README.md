@@ -75,6 +75,11 @@ profile. This records a reproducible adapter boundary, not a Sigma-Glyph
 protocol extension. Its exact cross-repository closure is preserved in the
 [`DA-SIGMA-0001` outcome receipt](outcomes/DA-SIGMA-0001.json).
 
+The guards over these records are enforced by reading git history, which is a
+boundary worth naming: rewriting the history removes a fact and the evidence of
+its removal together. An [external pin](docs/proposals/external-pin.md) is
+proposed for that, and is not adopted.
+
 ## Reproducible toolchain
 
 Cases must not depend on sibling checkouts of protocol repositories. The root

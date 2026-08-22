@@ -102,6 +102,11 @@ def main() -> int:
         rejected(lambda: validate(scaffold(root / "closed", closed)),
                  "a met requirement still awaiting missing material")
 
+        softened = copy.deepcopy(gate)
+        softened["requirements"][0]["requirement"] = "Some paperwork about the money."
+        rejected(lambda: validate(scaffold(root / "softened", softened), history=[gate]),
+                 "a published requirement quietly asking for less")
+
         untick = json.loads(json.dumps(gate))
         for item in untick["requirements"]:
             if item["id"] == "AG-006":
@@ -168,7 +173,7 @@ def main() -> int:
                                       declared["moved_from"])),
                  "a requirement dropped during a declared move")
 
-    print("ADMISSION-GATE-BOUNDARY: ALL PASS (13/13)")
+    print("ADMISSION-GATE-BOUNDARY: ALL PASS (14/14)")
     return 0
 
 
