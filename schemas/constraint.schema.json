@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/s0fractal/decision-archaeology/blob/main/schemas/constraint.schema.json",
+  "title": "Constraint and counterexample cache entry",
+  "description": "One thing not to pay for again — typed by how strong the claim actually is, because a dead end is not a refutation.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "id", "type", "claim", "environment", "applies_until",
+               "cost", "authority"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "schema": { "const": "decision-archaeology.constraint@v0" },
+    "id": { "type": "string", "pattern": "^CC-[0-9]{4}$" },
+    "type": {
+      "enum": ["REFUTATION", "BOUNDARY", "COST_WITNESS", "FAILED_ATTEMPT",
+               "INCONCLUSIVE", "UNRUNNABLE", "SUPERSEDED"]
+    },
+    "claim": { "type": "string", "minLength": 1 },
+    "tags": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "environment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["what", "versions"],
+      "properties": {
+        "what": { "type": "string", "minLength": 1 },
+        "versions": { "type": "array", "minItems": 1,
+                      "items": { "type": "string", "minLength": 1 } },
+        "assumptions": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+      }
+    },
+    "witness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["command", "expect"],
+      "properties": {
+        "command": { "type": "string", "minLength": 1 },
+        "expect": { "type": "string", "minLength": 1 },
+        "negative_control": { "type": "string", "minLength": 1 }
+      }
+    },
+    "measurement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["quantity", "value", "method"],
+      "properties": {
+        "quantity": { "type": "string", "minLength": 1 },
+        "value": { "type": "string", "minLength": 1 },
+        "method": { "type": "string", "minLength": 1 }
+      }
+    },
+    "applies_until": { "type": "string", "minLength": 1 },
+    "cost": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["to_discover", "to_recheck"],
+      "properties": {
+        "to_discover": { "type": "string", "minLength": 1 },
+        "to_recheck": { "type": "string", "minLength": 1 }
+      }
+    },
+    "authority": {
+      "enum": ["blocks-without-new-evidence", "informs-only", "records-only"]
+    },
+    "independent_reproduction": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["by", "at", "result"],
+        "properties": {
+          "by": { "type": "string", "minLength": 1 },
+          "at": { "type": "string", "minLength": 1 },
+          "result": { "enum": ["reproduced", "failed-to-reproduce", "disputed"] }
+        }
+      }
+    },
+    "relitigated": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["at", "outcome"],
+        "properties": {
+          "at": { "type": "string", "minLength": 1 },
+          "outcome": { "enum": ["still-holds", "overturned", "narrowed"] },
+          "note": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "supersedes": { "type": "string", "pattern": "^CC-[0-9]{4}$" }
+  }
+}

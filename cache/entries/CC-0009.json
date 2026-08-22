@@ -1,0 +1,30 @@
+{
+  "$schema": "../../schemas/constraint.schema.json",
+  "schema": "decision-archaeology.constraint@v0",
+  "id": "CC-0009",
+  "type": "FAILED_ATTEMPT",
+  "claim": "Detecting whether a rebuild read the implementation it verifies can be done by substring search over its source.",
+  "tags": [
+    "static-analysis",
+    "self-check",
+    "false-positive"
+  ],
+  "environment": {
+    "what": "a validator checking that a doc-derived rebuild does not import the reference module",
+    "versions": [
+      "python 3.13"
+    ],
+    "assumptions": []
+  },
+  "witness": {
+    "command": "python3 tests/validate_profile_test.py",
+    "expect": "the AST-based check rejects a rebuild that imports the reference and accepts one that merely names it in a docstring",
+    "negative_control": "the substring version rejected the legitimate rebuild, which is how the attempt failed"
+  },
+  "applies_until": "Always available as an option: substring search may be adequate where docstrings and sibling filenames cannot contain the stem. It failed here, not everywhere.",
+  "cost": {
+    "to_discover": "one false positive on the first run",
+    "to_recheck": "seconds"
+  },
+  "authority": "records-only"
+}

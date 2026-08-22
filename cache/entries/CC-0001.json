@@ -1,0 +1,33 @@
+{
+  "$schema": "../../schemas/constraint.schema.json",
+  "schema": "decision-archaeology.constraint@v0",
+  "id": "CC-0001",
+  "type": "REFUTATION",
+  "claim": "A history guard that compares a record against `git show HEAD:<path>` protects that record's past.",
+  "tags": [
+    "git",
+    "guards",
+    "provenance",
+    "vacuous-check"
+  ],
+  "environment": {
+    "what": "any git-backed record with a monotonicity guard",
+    "versions": [
+      "git 2.x"
+    ],
+    "assumptions": [
+      "the guard runs in CI after the change is committed"
+    ]
+  },
+  "witness": {
+    "command": "python3 tests/validate_exclusions_test.py",
+    "expect": "'an exclusion deleted in a later commit' is rejected — the case builds a real repository and commits the deletion before asserting",
+    "negative_control": "the same suite accepts the unmodified record, so the check is not rejecting everything"
+  },
+  "applies_until": "The guard reads revisions other than HEAD, or the record is verified against an anchor outside the repository.",
+  "cost": {
+    "to_discover": "one adversarial review round; the defect survived a full green gate",
+    "to_recheck": "seconds — one test file"
+  },
+  "authority": "blocks-without-new-evidence"
+}

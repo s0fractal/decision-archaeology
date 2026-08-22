@@ -1,0 +1,32 @@
+{
+  "$schema": "../../schemas/constraint.schema.json",
+  "schema": "decision-archaeology.constraint@v0",
+  "id": "CC-0004",
+  "type": "REFUTATION",
+  "claim": "A record excused from validation by its state (for example `superseded`) is safely excused.",
+  "tags": [
+    "validation",
+    "vacuous-check",
+    "graph"
+  ],
+  "environment": {
+    "what": "record sets with supersession or archival states",
+    "versions": [
+      "decision-archaeology at 96dccba"
+    ],
+    "assumptions": [
+      "state is derived from links between records"
+    ]
+  },
+  "witness": {
+    "command": "python3 tests/validate_need_outcome_test.py",
+    "expect": "'a supersession cycle, which would leave no receipt validated at all' is rejected",
+    "negative_control": "a legitimate supersession chain of two receipts validates, and both are checked"
+  },
+  "applies_until": "Every record is validated in every state, and the state only selects which schema version applies.",
+  "cost": {
+    "to_discover": "one adversarial review round; the arrangement produced a green run over an empty set",
+    "to_recheck": "seconds"
+  },
+  "authority": "blocks-without-new-evidence"
+}

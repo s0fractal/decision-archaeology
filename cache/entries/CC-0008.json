@@ -1,0 +1,38 @@
+{
+  "$schema": "../../schemas/constraint.schema.json",
+  "schema": "decision-archaeology.constraint@v0",
+  "id": "CC-0008",
+  "type": "COST_WITNESS",
+  "claim": "Church-encoded arithmetic is a practical way to express a money-sum check as a Sigma-Glyph term.",
+  "tags": [
+    "sigma-glyph",
+    "encoding",
+    "atp",
+    "arithmetic"
+  ],
+  "environment": {
+    "what": "Sigma-Glyph Book I v0.5 evaluator, Profile C1 compiler",
+    "versions": [
+      "sigma-glyph 0.6.7"
+    ],
+    "assumptions": [
+      "amounts in minor units, 36-bit magnitudes"
+    ]
+  },
+  "measurement": {
+    "quantity": "ATP for 178530840.00 + 157960871.70 == 336491711.70",
+    "value": "Church ~2.05e12 (about 61 per unit of magnitude) versus positional 61,479",
+    "method": "measured on the reference evaluator; Church cost extrapolated from a linear fit over magnitudes 200..400"
+  },
+  "witness": {
+    "command": "python3 needs/DA-SIGMA-0001-numeral-encoding-profile/fixtures/reproduce.py  # in the sigma-glyph checkout",
+    "expect": "positional encoding answers TRUE in 61,479 ATP; the Church form is reported at ~3.3e7 times the cost",
+    "negative_control": "the same script reports not-TRUE for a tampered sum, so the measurement is of a discriminating check"
+  },
+  "applies_until": "An evaluator memoises repeated subterm evaluation, or a numeral encoding with sublinear cost in magnitude is published.",
+  "cost": {
+    "to_discover": "two small probes",
+    "to_recheck": "under a minute"
+  },
+  "authority": "informs-only"
+}
