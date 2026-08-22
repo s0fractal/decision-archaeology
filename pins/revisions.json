@@ -1,0 +1,29 @@
+{
+  "schema": "decision-archaeology.revision-pins@v0",
+  "checked_at": "2026-08-22T14:21:28Z",
+  "authority": "revision-retention-only",
+  "non_claims": [
+    "This records who is known to retain an observation of a revision; it does not make a revision authentic, correct, or adopted.",
+    "An unwitnessed revision is not a compromised one. It is one whose survival depends entirely on this repository's own history.",
+    "No observation is created here. Asking an archive what it kept is not asking it to keep anything."
+  ],
+  "revisions": [
+    {
+      "revision": "47048acaf782c29dc478d62a1e041345351ebbe1",
+      "relied_on_by": [
+        "outcomes/DA-SIGMA-0001.2.json#resolution",
+        "outcomes/DA-SIGMA-0001.json#resolution"
+      ],
+      "custody": "unwitnessed",
+      "observation": null
+    },
+    {
+      "revision": "6e6cd49acb1673239c7af1965e0ad043d5a927f3",
+      "relied_on_by": [
+        "outcomes/DA-SIGMA-0001.2.json#rebuild"
+      ],
+      "custody": "unwitnessed",
+      "observation": null
+    }
+  ]
+}

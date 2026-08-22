@@ -78,7 +78,10 @@ protocol extension. Its exact cross-repository closure is preserved in the
 The guards over these records are enforced by reading git history, which is a
 boundary worth naming: rewriting the history removes a fact and the evidence of
 its removal together. An [external pin](docs/proposals/external-pin.md) is
-proposed for that, and is not adopted.
+proposed for that, and is not adopted. What is recorded already is the gap
+itself: [`pins/revisions.json`](pins/revisions.json) counts the revisions this
+repository's records depend on and how many of them anyone else is known to
+retain — currently none.
 
 ## Reproducible toolchain
 
