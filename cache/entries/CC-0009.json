@@ -17,9 +17,14 @@
     "assumptions": []
   },
   "witness": {
-    "command": "python3 tests/validate_profile_test.py",
-    "expect": "the AST-based check rejects a rebuild that imports the reference and accepts one that merely names it in a docstring",
-    "negative_control": "the substring version rejected the legitimate rebuild, which is how the attempt failed"
+    "counterexample": {
+      "argv": [
+        "python3",
+        "tests/validate_profile_test.py"
+      ],
+      "expected_exit": 0,
+      "means": "the suite builds the counterexample scenario and shows the sound check rejecting it; it is not a separated pair, so this entry may not block"
+    }
   },
   "applies_until": "Always available as an option: substring search may be adequate where docstrings and sibling filenames cannot contain the stem. It failed here, not everywhere.",
   "cost": {

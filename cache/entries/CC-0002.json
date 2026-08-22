@@ -19,9 +19,24 @@
     ]
   },
   "witness": {
-    "command": "python3 tests/validate_need_outcome_test.py",
-    "expect": "'a committed receipt rewritten under the same name' is rejected",
-    "negative_control": "the committed receipts themselves validate, so the rule does not reject all content"
+    "counterexample": {
+      "argv": [
+        "python3",
+        "cache/witnesses/cc_0002_pathname_vs_content.py",
+        "counterexample"
+      ],
+      "expected_exit": 0,
+      "means": "a pathname-survival check reports nothing when the receipt at that path is replaced"
+    },
+    "negative_control": {
+      "argv": [
+        "python3",
+        "cache/witnesses/cc_0002_pathname_vs_content.py",
+        "control"
+      ],
+      "expected_exit": 0,
+      "means": "comparing with the first committed bytes does report the rewrite"
+    }
   },
   "applies_until": "Content is compared against the bytes first committed at that path, or an external anchor holds the digest.",
   "cost": {

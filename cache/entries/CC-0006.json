@@ -19,9 +19,19 @@
     ]
   },
   "witness": {
-    "command": "grep -n 'opens no sockets and fetches nothing' ../oaip/SPEC.md",
-    "expect": "the threat table states the design boundary in the protocol's own words",
-    "negative_control": "the same file does describe workspace observation, so the grep is not failing for absence of content"
+    "counterexample": {
+      "argv": [
+        "grep",
+        "-q",
+        "opens no sockets and fetches nothing",
+        "../oaip/SPEC.md"
+      ],
+      "expected_exit": 0,
+      "means": "the design states the boundary in its own words (needs the sibling checkout)",
+      "requires": [
+        "../oaip/SPEC.md"
+      ]
+    }
   },
   "applies_until": "OAIP defines an acquisition record type, or a profile binds fetched bytes to an authority and time by observation rather than narration.",
   "cost": {

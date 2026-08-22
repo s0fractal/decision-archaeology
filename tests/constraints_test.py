@@ -43,10 +43,23 @@ def main() -> int:
 
     uncontrolled = copy.deepcopy(entries)
     for entry in uncontrolled:
-        if entry["type"] == "REFUTATION":
+        if entry["authority"] == "blocks-without-new-evidence":
             entry["witness"].pop("negative_control", None)
     rejected(lambda: validate(uncontrolled),
-             "a blocking refutation whose witness cannot fail")
+             "a blocking refutation with no executable negative control")
+
+    theatrical = copy.deepcopy(entries)
+    for entry in theatrical:
+        if entry["authority"] == "blocks-without-new-evidence":
+            entry["witness"] = {"counterexample": {"argv": ["true"]},
+                                "negative_control": {"argv": ["true"]}}
+    rejected(lambda: validate(theatrical),
+             "a blocking entry whose halves run nothing")
+
+    prose = copy.deepcopy(entries)
+    prose[0]["witness"] = {"counterexample": "I ran it and it failed"}
+    rejected(lambda: validate(prose),
+             "a witness written as a sentence rather than an argv")
 
     unbounded = copy.deepcopy(entries)
     unbounded[0]["applies_until"] = "never"
@@ -65,7 +78,7 @@ def main() -> int:
     rejected(lambda: validate(misfiled),
              "an entry whose identifier does not match its file")
 
-    print("CONSTRAINT-BOUNDARY: ALL PASS (6/6)")
+    print("CONSTRAINT-BOUNDARY: ALL PASS (8/8)")
     return 0
 
 

@@ -25,9 +25,40 @@
     "method": "measured on the reference evaluator; Church cost extrapolated from a linear fit over magnitudes 200..400"
   },
   "witness": {
-    "command": "python3 needs/DA-SIGMA-0001-numeral-encoding-profile/fixtures/reproduce.py  # in the sigma-glyph checkout",
-    "expect": "positional encoding answers TRUE in 61,479 ATP; the Church form is reported at ~3.3e7 times the cost",
-    "negative_control": "the same script reports not-TRUE for a tampered sum, so the measurement is of a discriminating check"
+    "counterexample": {
+      "argv": [
+        "uv",
+        "run",
+        "--project",
+        "toolchain",
+        "--frozen",
+        "python",
+        "cache/witnesses/cc_0008_encoding_cost.py",
+        "counterexample"
+      ],
+      "expected_exit": 0,
+      "means": "Church encoding projects past 1e11 ATP at the case magnitude",
+      "requires": [
+        "toolchain/uv.lock"
+      ]
+    },
+    "negative_control": {
+      "argv": [
+        "uv",
+        "run",
+        "--project",
+        "toolchain",
+        "--frozen",
+        "python",
+        "cache/witnesses/cc_0008_encoding_cost.py",
+        "control"
+      ],
+      "expected_exit": 0,
+      "means": "the positional encoding of the same claim stays under the budget",
+      "requires": [
+        "toolchain/uv.lock"
+      ]
+    }
   },
   "applies_until": "An evaluator memoises repeated subterm evaluation, or a numeral encoding with sublinear cost in magnitude is published.",
   "cost": {

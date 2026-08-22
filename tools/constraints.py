@@ -13,9 +13,16 @@ prohibition. So the type of an entry decides what it is allowed to do:
     UNRUNNABLE      could not be tested here; the weakest thing a record can say
     SUPERSEDED      replaced by a later entry
 
-Evidence burden follows claim strength. Only a REFUTATION may block, and only if
-it carries a runnable witness AND a negative control — a check that cannot fail
-is not evidence that something is impossible.
+Evidence burden follows claim strength. Only a REFUTATION may block, and only
+with two executable halves: a counterexample that shows the claim failing, and a
+negative control that shows the harness can still report success. Prose is not
+evidence — a witness whose `expect` nobody runs is a sentence about a test, and
+`command: true` passes it.
+
+The cache is also a record about the past, so it obeys the rules this repository
+already applies to those: an entry may not be deleted, and its settled fields —
+what it claims, where, and by which witness — may not be rewritten. New results
+arrive as relitigation, narrowing or supersession, never as an edit.
 """
 
 from __future__ import annotations
@@ -28,6 +35,9 @@ import sys
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(REPO_ROOT))
+
+from tools.history import committed_versions, unexplained_vanished  # noqa: E402
 ENTRIES = REPO_ROOT / "cache" / "entries"
 SCHEMA = "decision-archaeology.constraint@v0"
 TYPES = {"REFUTATION", "BOUNDARY", "COST_WITNESS", "FAILED_ATTEMPT",
@@ -36,6 +46,8 @@ MAY_BLOCK = {"REFUTATION"}
 MAY_INFORM = {"REFUTATION", "BOUNDARY", "COST_WITNESS"}
 NEEDS_WITNESS = {"REFUTATION", "BOUNDARY", "COST_WITNESS", "FAILED_ATTEMPT"}
 NEEDS_MEASUREMENT = {"COST_WITNESS"}
+SETTLED = ("id", "type", "claim", "environment")
+STRENGTH = {"records-only": 0, "informs-only": 1, "blocks-without-new-evidence": 2}
 
 
 def require(condition: bool, message: str) -> None:
@@ -76,10 +88,20 @@ def validate(entries: list[dict]) -> None:
             witness = entry.get("witness")
             require(isinstance(witness, dict),
                     f"{entry['id']}: a {kind} needs a runnable witness")
-        if kind in MAY_BLOCK:
-            require(entry["witness"].get("negative_control"),
-                    f"{entry['id']}: may block a path and carries no negative control; a "
-                    "check that cannot fail is not evidence that something is impossible")
+            require(isinstance(witness.get("counterexample"), dict)
+                    and witness["counterexample"].get("argv"),
+                    f"{entry['id']}: a witness is an argv that runs, not a sentence "
+                    "about a test that might")
+        if authority == "blocks-without-new-evidence":
+            control = entry["witness"].get("negative_control")
+            require(isinstance(control, dict) and control.get("argv"),
+                    f"{entry['id']}: may block a path and carries no executable negative "
+                    "control; a check that cannot fail is not evidence that something is "
+                    "impossible")
+            for half in ("counterexample", "negative_control"):
+                argv = entry["witness"][half]["argv"]
+                require(argv[0] != "true" and len(argv) > 1,
+                        f"{entry['id']}: the {half} must do something")
         if kind in NEEDS_MEASUREMENT:
             require(isinstance(entry.get("measurement"), dict),
                     f"{entry['id']}: a cost witness without a measurement is an opinion")
@@ -90,11 +112,49 @@ def validate(entries: list[dict]) -> None:
                 f"{entry['id']}: both costs are required — the cache is only worth "
                 "consulting when re-checking is cheaper than re-discovering")
 
+    for path in sorted(ENTRIES.glob("*.json")):
+        current = json.loads(path.read_text())
+        for earlier in committed_versions(path):
+            for field in SETTLED:
+                require(earlier.get(field) == current.get(field),
+                        f"{current['id']}: its {field} was rewritten. What an entry claims, "
+                        "and where it claims it, is settled: a different claim is a new "
+                        "entry that supersedes this one")
+            # Evidence may improve — a better reproducer for the same claim is the
+            # point. Authority may not: it can be given up freely and regained only
+            # against a recorded relitigation, so an entry cannot quietly promote
+            # itself back to blocking a path.
+            grew = STRENGTH[current["authority"]] > STRENGTH[earlier["authority"]]
+            require(not grew or current.get("relitigated"),
+                    f"{current['id']}: was {earlier['authority']} and now claims "
+                    f"{current['authority']} with no relitigation recorded")
+    forgotten = unexplained_vanished(REPO_ROOT, "cache/entries/*.json")
+    require(not forgotten,
+            f"{forgotten}: entries were committed and are gone. A memory that can "
+            "forget the wall it recorded is not a memory")
+
     blocking = [e for e in entries if e["authority"] == "blocks-without-new-evidence"]
     informing = [e for e in entries if e["authority"] == "informs-only"]
     print(f"PASS: {len(entries)} entries — {len(blocking)} may block, "
           f"{len(informing)} inform, {len(entries) - len(blocking) - len(informing)} "
           "record only")
+
+
+def run_half(entry: dict, half: str) -> bool | None:
+    """True held, False failed, None could not run here (declared beforehand)."""
+    action = entry["witness"][half]
+    missing = [need for need in action.get("requires", [])
+               if not (REPO_ROOT / need).exists()]
+    if missing:
+        return None
+    result = subprocess.run(action["argv"], cwd=REPO_ROOT, capture_output=True, text=True)
+    expected = action.get("expected_exit", 0)
+    if result.returncode == expected:
+        return True
+    last = (result.stderr or result.stdout).strip().splitlines()
+    print(f"  {entry['id']} {half}: exit {result.returncode}, expected {expected}"
+          f"{' — ' + last[-1][:140] if last else ''}")
+    return False
 
 
 def run_witnesses(entries: list[dict], only_blocking: bool) -> int:
@@ -103,22 +163,31 @@ def run_witnesses(entries: list[dict], only_blocking: bool) -> int:
         witness = entry.get("witness")
         if not witness:
             continue
-        if only_blocking and entry["authority"] != "blocks-without-new-evidence":
+        blocking = entry["authority"] == "blocks-without-new-evidence"
+        if only_blocking and not blocking:
             continue
-        result = subprocess.run(witness["command"], shell=True, cwd=REPO_ROOT,
-                                capture_output=True, text=True)
-        state = "ok" if result.returncode == 0 else "FAILED"
-        if result.returncode != 0:
-            failures += 1
-            print(f"  {entry['id']} witness {state}: {witness['command']}")
-            print(f"    {(result.stderr or result.stdout).strip().splitlines()[-1][:160]}")
-        else:
-            print(f"  {entry['id']} witness {state}")
+        halves = [half for half in ("counterexample", "negative_control") if half in witness]
+        outcomes = [run_half(entry, half) for half in halves]
+        if None in outcomes:
+            require(not blocking,
+                    f"{entry['id']}: may block a path and its witness cannot run here")
+            print(f"  {entry['id']} unrunnable here — treat as records-only until it runs")
+            continue
+        held = all(outcomes)
+        failures += 0 if held else 1
+        print(f"  {entry['id']} {'holds' if held else 'NO LONGER HOLDS'} "
+              f"({'+'.join(halves)})")
     return failures
 
 
 def lookup(entries: list[dict], query: str) -> None:
-    """What is already known about this, before spending anything on it."""
+    """What is already known about this, before spending anything on it.
+
+    Consulting means running, so a matched entry that may block has its witness
+    re-executed here. An entry read out of a working tree nobody checked is a
+    sentence, and this cache exists because sentences are what fail.
+    """
+    validate(entries)
     words = {word.lower() for word in re.findall(r"[a-z0-9-]+", query.lower())
              if len(word) > 2}
     scored = []
@@ -138,7 +207,12 @@ def lookup(entries: list[dict], query: str) -> None:
               f"[{', '.join(entry['environment']['versions'])}]")
         print(f"  stops applying: {entry['applies_until']}")
         print(f"  recheck cost: {entry['cost']['to_recheck']}")
-        if entry["type"] != "REFUTATION":
+        if entry["authority"] == "blocks-without-new-evidence":
+            held = run_witnesses([entry], only_blocking=True) == 0
+            if not held:
+                print("  WARNING: its witness no longer holds — treat as informs-only "
+                      "until relitigated")
+        else:
             print("  note: this does not forbid the path; it only tells you what happened")
 
 

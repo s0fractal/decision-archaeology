@@ -19,14 +19,19 @@
     ]
   },
   "witness": {
-    "command": "python3 tests/validate_need_outcome_test.py",
-    "expect": "'a supersession cycle, which would leave no receipt validated at all' is rejected",
-    "negative_control": "a legitimate supersession chain of two receipts validates, and both are checked"
+    "counterexample": {
+      "argv": [
+        "python3",
+        "tests/validate_need_outcome_test.py"
+      ],
+      "expected_exit": 0,
+      "means": "the suite builds the counterexample scenario and shows the sound check rejecting it; it is not a separated pair, so this entry may not block"
+    }
   },
   "applies_until": "Every record is validated in every state, and the state only selects which schema version applies.",
   "cost": {
     "to_discover": "one adversarial review round; the arrangement produced a green run over an empty set",
     "to_recheck": "seconds"
   },
-  "authority": "blocks-without-new-evidence"
+  "authority": "informs-only"
 }

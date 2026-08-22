@@ -17,9 +17,19 @@
     "assumptions": []
   },
   "witness": {
-    "command": "grep -c 'L-' ../sev/profiles/PROV-EVIDENCE-VIEW.md",
-    "expect": "every code qualifies what a projection cannot express about a sealed snapshot; none describes material never acquired",
-    "negative_control": "the file does define absence codes (L-NO*), so the distinction is about scope, not about missing documentation"
+    "counterexample": {
+      "argv": [
+        "grep",
+        "-q",
+        "loss_manifest",
+        "../sev/profiles/PROV-EVIDENCE-VIEW.md"
+      ],
+      "expected_exit": 0,
+      "means": "the profile's loss codes are about projection (needs the sibling checkout)",
+      "requires": [
+        "../sev/profiles/PROV-EVIDENCE-VIEW.md"
+      ]
+    }
   },
   "applies_until": "SEV adds world-absence semantics, or an application publishes its own absence vocabulary (this repository did).",
   "cost": {
