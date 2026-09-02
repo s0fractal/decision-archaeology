@@ -2,8 +2,10 @@
 
 Decision Archaeology is the application layer that exercises a stack of
 independently governed protocols. Do not turn product needs into new normative
-contracts here when OAIP, Warrant, Sigma-Glyph, BOS, or SEV already owns the
-concept.
+contracts here when OAIP, Warrant, Sigma-Glyph, or BOS already owns the concept.
+SEV is an abandoned historical trajectory: its preserved projection-loss work
+may inform a boundary, but it is not a live contract owner or default target for
+new needs. Reusing it as current requires an explicit re-adoption act.
 
 When a case exposes a missing capability:
 

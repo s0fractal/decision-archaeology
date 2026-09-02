@@ -4,9 +4,9 @@
 A case cites public records it does not own. Three questions decide whether a
 citation survives: can the source still be fetched, does anyone hold the exact
 bytes that were read, and is that anyone independent of the publisher. The
-answers change without warning, and none of the stack's protocols owns them:
-OAIP opens no sockets by design, and SEV's loss manifest describes what a
-projection cannot express, not what the world is missing.
+answers change without warning, and none of the stack's active protocols owns
+them: OAIP opens no sockets by design, and historical SEV's loss manifest
+describes what a projection cannot express, not what the world is missing.
 
 So this is an application-side record, deliberately narrow. It attests
 retrievability and custody. It says nothing about whether a source supports any
