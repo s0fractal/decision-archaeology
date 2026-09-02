@@ -37,7 +37,7 @@ Each protocol remains the canonical owner of its own contracts.
 | Signed assertions and commitments | Warrant |
 | Deterministic bounded checks | Sigma-Glyph |
 | Competing hypotheses | BOS |
-| Recorded omission and loss | SEV |
+| Recorded omission and loss | Decision Archaeology's application records; historical SEV `loss_manifest` work applies only to projection loss and is not a live dependency |
 | Investigation workflow and user experience | Decision Archaeology |
 
 These integrations are a direction, not a claim that every bridge already

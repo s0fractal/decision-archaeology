@@ -36,5 +36,12 @@
     "to_discover": "reading one section",
     "to_recheck": "one grep"
   },
-  "authority": "informs-only"
+  "authority": "records-only",
+  "relitigated": [
+    {
+      "at": "2026-09-02",
+      "outcome": "narrowed",
+      "note": "SEV is now ABANDONED and excluded from the active protocol set. The executable witness remains a historical boundary over the preserved profile bytes; it no longer identifies a live contract owner or target for new needs."
+    }
+  ]
 }
