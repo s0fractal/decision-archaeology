@@ -1,5 +1,7 @@
 # Repository guidance
 
+> **ARCHIVED / EXCLUDED — 2026-09-17.** This is historical material, not an active work queue. See [RETIREMENT.md](RETIREMENT.md) for scope, loss and the preserved pinned consumer.
+
 Decision Archaeology is the application layer that exercises a stack of
 independently governed protocols. Do not turn product needs into new normative
 contracts here when OAIP, Warrant, Sigma-Glyph, or BOS already owns the concept.
