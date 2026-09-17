@@ -1,5 +1,7 @@
 # Contributing
 
+> **ARCHIVED / EXCLUDED — 2026-09-17.** This is historical material, not an active work queue. See [RETIREMENT.md](RETIREMENT.md) for scope, loss and the preserved pinned consumer.
+
 Decision Archaeology is currently validating its shape through concrete public
 cases. Small changes backed by a blocked investigation operation are preferred
 to broad speculative frameworks.

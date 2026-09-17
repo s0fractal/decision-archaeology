@@ -1,5 +1,7 @@
 # Decision Archaeology
 
+> **ARCHIVED / EXCLUDED — 2026-09-17.** This is historical material, not an active work queue. See [RETIREMENT.md](RETIREMENT.md) for scope, loss and the preserved pinned consumer.
+
 **Reproducible retrospective investigations as evidence-bound decision graphs.**
 
 Decision Archaeology reconstructs how a consequential decision became possible:
